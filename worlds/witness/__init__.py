@@ -21,6 +21,7 @@ from .locations import (
 from .rules import set_rules
 from .regions import create_regions
 from .full_logic import EVENT_ITEM_PAIRS
+from .Options import is_option_enabled, the_witness_options
 
 
 class WitnessWorld(World):
@@ -32,6 +33,7 @@ class WitnessWorld(World):
     item_name_to_id = {name: data.code for name, data in ITEM_TABLE.items()}
     location_name_to_id = ALL_LOCATIONS_TO_ID
     hidden = False
+    options = the_witness_options
 
     def _get_slot_data(self):
         return {
@@ -76,9 +78,8 @@ class WitnessWorld(World):
 
     def fill_slot_data(self) -> dict:
         slot_data = self._get_slot_data()
-        for option_name in set():  # Put Witness Options in!
-            option = getattr(self.world, option_name)[self.player]
-            slot_data[option_name] = int(option.value)
+        for option_name in the_witness_options:
+            slot_data[option_name] = is_option_enabled(self.world, self.player, option_name)
 
         return slot_data
 
