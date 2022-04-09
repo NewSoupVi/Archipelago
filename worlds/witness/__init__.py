@@ -37,7 +37,7 @@ class WitnessWorld(World):
 
     def _get_slot_data(self):
         return {
-            'seed': random.randint(0, 1000000),
+            'seed': self.world.random.randint(0, 1000000),
             'panelhex_to_id': CHECK_PANELHEX_TO_ID
         }
 
