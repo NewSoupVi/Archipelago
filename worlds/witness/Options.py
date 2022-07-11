@@ -41,13 +41,9 @@ class ShuffleDoors(Choice):
 
 
 class ShuffleDiscardedPanels(Toggle):
-<<<<<<< HEAD
     """Add Discarded Panels into the location pool.
     Solving certain Discarded Panels may still be necessary to beat the game, even if this is off."""
-=======
-    """Discarded Panels will have items on them.
-    Solving certain Discarded Panels may still be necessary even if off!"""
->>>>>>> main
+
     display_name = "Shuffle Discarded Panels"
 
 

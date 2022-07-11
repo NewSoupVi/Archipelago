@@ -3,11 +3,7 @@
 ## Required Software
 
 - [The Witness for 64-bit Windows (e.g. Steam version)](https://store.steampowered.com/app/210970/The_Witness/)
-<<<<<<< HEAD
-- [The Witness Archipelago Randomizer](https://github.com/JarnoWesthof/The-Witness-Randomizer-for-Archipelago/releases)
-=======
 - [The Witness Archipelago Randomizer](https://github.com/Jarno458/The-Witness-Randomizer-for-Archipelago/releases)
->>>>>>> main
 
 ## Optional Software
 
