@@ -12,7 +12,7 @@ from .items import WitnessItem, StaticWitnessItems, WitnessPlayerItems
 from .rules import set_rules
 from .regions import WitnessRegions
 from .Options import is_option_enabled, the_witness_options, get_option_value
-from .utils import best_junk_to_add_based_on_weights
+from .utils import best_junk_to_add_based_on_weights, get_audio_logs
 
 
 class WitnessWebWorld(WebWorld):
@@ -55,7 +55,8 @@ class WitnessWorld(World):
             'panelhex_to_id': self.locat.CHECK_PANELHEX_TO_ID,
             'item_id_to_door_hexes': self.items.ITEM_ID_TO_DOOR_HEX,
             'door_hexes': self.items.DOORS,
-            'symbols_not_in_the_game': self.items.SYMBOLS_NOT_IN_THE_GAME
+            'symbols_not_in_the_game': self.items.SYMBOLS_NOT_IN_THE_GAME,
+            'log_ids_to_hints': self.log_ids_to_hints,
         }
 
     def generate_early(self):
@@ -70,6 +71,9 @@ class WitnessWorld(World):
         self.items = WitnessPlayerItems(self.locat, self.world, self.player, self.player_logic)
         self.regio = WitnessRegions(self.locat)
 
+        self.prog_items = list()
+        self.log_ids_to_hints = dict()
+
         self.junk_items_created = {key: 0 for key in self.items.JUNK_WEIGHTS.keys()}
 
     def generate_basic(self):
@@ -80,6 +84,8 @@ class WitnessWorld(World):
             witness_item = self.create_item(item)
             if item in self.items.PROGRESSION_TABLE:
                 pool.append(witness_item)
+                self.prog_items.append(witness_item)
+
                 items_by_name[item] = witness_item
 
         less_junk = 0
@@ -101,6 +107,7 @@ class WitnessWorld(World):
         for item in self.player_logic.STARTING_INVENTORY:
             self.world.push_precollected(items_by_name[item])
             pool.remove(items_by_name[item])
+            self.prog_items.remove(items_by_name[item])
 
         for item in self.items.EXTRA_AMOUNTS:
             witness_item = self.create_item(item)
@@ -129,6 +136,45 @@ class WitnessWorld(World):
 
     def set_rules(self):
         set_rules(self.world, self.player, self.player_logic, self.locat)
+
+    def post_fill(self):
+        exclude_locations = set()
+
+        hints = list()
+
+        f_brain = self.world.find_item("Functioning Brain", self.player)
+
+        f_brain_hint = ["Functioning Brain", f_brain.name, self.world.get_player_name(f_brain.player), "item"]
+
+        exclude_locations.add(f_brain)
+
+        for item in self.world.random.sample(self.prog_items, 8):
+            hint = [item.name, item.location.name, self.world.get_player_name(item.location.player), "item"]
+            hints.append(hint)
+            exclude_locations.add(item.location)
+
+        remaining_locations = {location for location in self.world.get_locations()
+                               if location not in exclude_locations and not location.event
+                               and location.player == self.player}
+
+        for location in self.world.random.sample(remaining_locations, 8):
+            hint = [location.item.name, location.name, self.world.get_player_name(location.item.player), "location"]
+            hints.append(hint)
+
+        audio_logs = get_audio_logs()
+
+        extra_log = audio_logs.pop(self.world.random.randrange(len(audio_logs)))
+
+        self.world.random.shuffle(audio_logs)
+        for i in range(0, len(audio_logs), 3):
+            audio_log_chunk = audio_logs[i:i + 3]
+
+            hint = hints.pop(self.world.random.randrange(len(hints)))
+
+            for audio_log in audio_log_chunk:
+                self.log_ids_to_hints[int(audio_log, 16)] = hint
+
+        self.log_ids_to_hints[int(extra_log, 16)] = f_brain_hint
 
     def fill_slot_data(self) -> dict:
         slot_data = self._get_slot_data()
