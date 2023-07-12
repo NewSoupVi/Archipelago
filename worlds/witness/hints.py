@@ -158,10 +158,10 @@ def get_priority_hint_items(multiworld: MultiWorld, player: int):
         if get_option_value(multiworld, player, "doors") >= 2:
             priority.add("Desert Laser")
             lasers.remove("Desert Laser")
-            priority.update(multiworld.per_slot_randoms[player].sample(lasers, 5))
+            priority.update(multiworld.per_slot_randoms[player].sample(sorted(lasers), 5))
 
         else:
-            priority.update(multiworld.per_slot_randoms[player].sample(lasers, 6))
+            priority.update(multiworld.per_slot_randoms[player].sample(sorted(lasers), 6))
 
     return priority
 
