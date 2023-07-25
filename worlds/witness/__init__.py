@@ -83,7 +83,7 @@ class WitnessWorld(World):
             # Playtest config parameters to send to the client.
             'playtest_boost_duration': 20,
             'playtest_num_charges_per_full_boost': 20,
-            'playtest_num_charges_per_small_fill_base': 4,
+            'playtest_num_charges_per_small_fill_base': 3,
             'playtest_num_charges_per_small_fill_scaling': 1,
             'playtest_num_starting_boost_capacity': 1
         }
