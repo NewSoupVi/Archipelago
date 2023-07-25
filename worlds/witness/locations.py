@@ -19,22 +19,29 @@ class StaticWitnessLocations:
         "Tutorial Front Left",
         "Tutorial Back Left",
         "Tutorial Back Right",
+        "Tutorial Patio Floor",
         "Tutorial Gate Open",
 
         "Outside Tutorial Vault Box",
         "Outside Tutorial Discard",
         "Outside Tutorial Shed Row 5",
         "Outside Tutorial Tree Row 9",
+        "Outside Tutorial Outpost Entry Panel",
+        "Outside Tutorial Outpost Exit Panel",
 
         "Glass Factory Discard",
         "Glass Factory Back Wall 5",
         "Glass Factory Front 3",
         "Glass Factory Melting 3",
 
+        "Symmetry Island Lower Panel",
         "Symmetry Island Right 5",
         "Symmetry Island Back 6",
         "Symmetry Island Left 7",
+        "Symmetry Island Upper Panel",
         "Symmetry Island Scenery Outlines 5",
+        "Symmetry Island Laser Yellow 3",
+        "Symmetry Island Laser Blue 3",
         "Symmetry Island Laser Panel",
 
         "Orchard Apple Tree 5",
@@ -49,9 +56,15 @@ class StaticWitnessLocations:
         "Desert Final Bent 3",
         "Desert Laser Panel",
 
+        "Quarry Entry 1 Panel",
+        "Quarry Entry 2 Panel",
+        "Quarry Stoneworks Entry Left Panel",
+        "Quarry Stoneworks Entry Right Panel",
         "Quarry Stoneworks Lower Row 6",
         "Quarry Stoneworks Upper Row 8",
+        "Quarry Stoneworks Control Room Left",
         "Quarry Stoneworks Control Room Right",
+        "Quarry Stoneworks Stair Control",
         "Quarry Boathouse Intro Right",
         "Quarry Boathouse Intro Left",
         "Quarry Boathouse Front Row 5",
@@ -86,13 +99,29 @@ class StaticWitnessLocations:
 
         "Town Cargo Box Discard",
         "Town Tall Hexagonal",
+        "Town Church Entry Panel",
         "Town Church Lattice",
+        "Town Maze Stair Control",
         "Town Rooftop Discard",
         "Town Red Rooftop 5",
         "Town Wooden Roof Lower Row 5",
         "Town Wooden Rooftop",
+        "Town Windmill Entry Panel",
+        "Town RGB House Entry Panel",
         "Town Laser Panel",
 
+        "Town RGB Room Left",
+        "Town RGB Room Right",
+        "Town Sound Room Right",
+
+        "Windmill Theater Entry Panel",
+        "Theater Exit Left Panel",
+        "Theater Exit Right Panel",
+        "Theater Tutorial Video",
+        "Theater Desert Video",
+        "Theater Jungle Video",
+        "Theater Shipwreck Video",
+        "Theater Mountain Video",
         "Theater Discard",
 
         "Jungle Discard",
@@ -102,24 +131,32 @@ class StaticWitnessLocations:
         "Jungle Laser Panel",
 
         "River Vault Box",
+        "River Monastery Shortcut Panel",
 
+        "Bunker Entry Panel",
         "Bunker Intro Left 5",
         "Bunker Intro Back 4",
         "Bunker Glass Room 3",
         "Bunker UV Room 2",
         "Bunker Laser Panel",
 
+        "Swamp Entry Panel",
         "Swamp Intro Front 6",
         "Swamp Intro Back 8",
         "Swamp Between Bridges Near Row 4",
         "Swamp Cyan Underwater 5",
         "Swamp Platform Row 4",
+        "Swamp Platform Shortcut Right Panel",
         "Swamp Between Bridges Far Row 4",
         "Swamp Red Underwater 4",
+        "Swamp Purple Underwater",
         "Swamp Beyond Rotating Bridge 4",
         "Swamp Blue Underwater 5",
         "Swamp Laser Panel",
 
+        "Treehouse First Door Panel",
+        "Treehouse Second Door Panel",
+        "Treehouse Third Door Panel",
         "Treehouse Yellow Bridge 9",
         "Treehouse First Purple Bridge 5",
         "Treehouse Second Purple Bridge 7",
@@ -129,22 +166,11 @@ class StaticWitnessLocations:
         "Treehouse Laser Discard",
         "Treehouse Right Orange Bridge 12",
         "Treehouse Laser Panel",
+        "Treehouse Bridge Control",
 
         "Mountainside Discard",
         "Mountainside Vault Box",
-
         "Mountaintop River Shape",
-        "Tutorial Patio Floor",
-        "Quarry Stoneworks Control Room Left",
-        "Theater Tutorial Video",
-        "Theater Desert Video",
-        "Theater Jungle Video",
-        "Theater Shipwreck Video",
-        "Theater Mountain Video",
-        "Town RGB Room Left",
-        "Town RGB Room Right",
-        "Town Sound Room Right",
-        "Swamp Purple Underwater",
 
         "First Hallway EP",
         "Tutorial Cloud EP",
@@ -316,6 +342,72 @@ class StaticWitnessLocations:
         "Town Obelisk Side 4",
         "Town Obelisk Side 5",
         "Town Obelisk Side 6",
+
+        "Caves Blue Tunnel Right First 4",
+        "Caves Blue Tunnel Left First 1",
+        "Caves Blue Tunnel Left Second 5",
+        "Caves Blue Tunnel Right Second 5",
+        "Caves Blue Tunnel Right Third 1",
+        "Caves Blue Tunnel Left Fourth 1",
+        "Caves Blue Tunnel Left Third 1",
+
+        "Caves First Floor Middle",
+        "Caves First Floor Right",
+        "Caves First Floor Left",
+        "Caves First Floor Grounded",
+        "Caves Lone Pillar",
+        "Caves First Wooden Beam",
+        "Caves Second Wooden Beam",
+        "Caves Third Wooden Beam",
+        "Caves Fourth Wooden Beam",
+        "Caves Right Upstairs Left Row 8",
+        "Caves Right Upstairs Right Row 3",
+        "Caves Left Upstairs Single",
+        "Caves Left Upstairs Left Row 5",
+
+        "Caves Challenge Entry Panel",
+        "Challenge Tunnels Entry",
+
+        "Tunnels Vault Box",
+        "Theater Challenge Video",
+
+        "Caves Skylight EP",
+        "Challenge Water EP",
+        "Tunnels Theater Flowers EP",
+        "Tutorial Gate EP",
+
+        "Mountaintop Trap Door Triple Exit",
+
+        "Mountain Floor 1 Light Bridge Controller",
+
+        "Mountain Floor 1 Right Row 5",
+        "Mountain Floor 1 Left Row 7",
+        "Mountain Floor 1 Back Row 3",
+        "Mountain Floor 1 Trash Pillar 2",
+        "Mountain Floor 2 Near Row 5",
+        "Mountain Floor 2 Far Row 6",
+
+        "Mountain Floor 2 Light Bridge Controller Near",
+        "Mountain Floor 2 Light Bridge Controller Far",
+
+        "Mountain Bottom Floor Yellow Bridge EP",
+        "Mountain Bottom Floor Blue Bridge EP",
+        "Mountain Floor 2 Pink Bridge EP",
+
+        "Mountain Floor 2 Elevator Discard",
+        "Mountain Bottom Floor Giant Puzzle",
+
+        "Mountain Bottom Floor Final Room Entry Left",
+        "Mountain Bottom Floor Final Room Entry Right",
+
+        "Mountain Bottom Floor Caves Entry",
+
+        "Mountain Final Room Left Pillar 4",
+        "Mountain Final Room Right Pillar 4",
+
+        "Challenge Vault Box",
+        "Theater Challenge Video",
+        "Mountain Bottom Floor Discard",
     }
 
     OBELISK_SIDES = {
@@ -353,70 +445,6 @@ class StaticWitnessLocations:
         "Town Obelisk Side 4",
         "Town Obelisk Side 5",
         "Town Obelisk Side 6",
-    }
-
-    CAVES_LOCATIONS = {
-        "Caves Blue Tunnel Right First 4",
-        "Caves Blue Tunnel Left First 1",
-        "Caves Blue Tunnel Left Second 5",
-        "Caves Blue Tunnel Right Second 5",
-        "Caves Blue Tunnel Right Third 1",
-        "Caves Blue Tunnel Left Fourth 1",
-        "Caves Blue Tunnel Left Third 1",
-
-        "Caves First Floor Middle",
-        "Caves First Floor Right",
-        "Caves First Floor Left",
-        "Caves First Floor Grounded",
-        "Caves Lone Pillar",
-        "Caves First Wooden Beam",
-        "Caves Second Wooden Beam",
-        "Caves Third Wooden Beam",
-        "Caves Fourth Wooden Beam",
-        "Caves Right Upstairs Left Row 8",
-        "Caves Right Upstairs Right Row 3",
-        "Caves Left Upstairs Single",
-        "Caves Left Upstairs Left Row 5",
-
-        "Tunnels Vault Box",
-        "Theater Challenge Video",
-
-        "Caves Skylight EP",
-        "Challenge Water EP",
-        "Tunnels Theater Flowers EP",
-        "Tutorial Gate EP",
-    }
-
-    MOUNTAIN_UNREACHABLE_FROM_BEHIND = {
-        "Mountaintop Trap Door Triple Exit",
-
-        "Mountain Floor 1 Right Row 5",
-        "Mountain Floor 1 Left Row 7",
-        "Mountain Floor 1 Back Row 3",
-        "Mountain Floor 1 Trash Pillar 2",
-        "Mountain Floor 2 Near Row 5",
-        "Mountain Floor 2 Far Row 6",
-
-        "Mountain Floor 2 Light Bridge Controller Near",
-        "Mountain Floor 2 Light Bridge Controller Far",
-
-        "Mountain Bottom Floor Yellow Bridge EP",
-        "Mountain Bottom Floor Blue Bridge EP",
-        "Mountain Floor 2 Pink Bridge EP",
-    }
-
-    MOUNTAIN_REACHABLE_FROM_BEHIND = {
-        "Mountain Floor 2 Elevator Discard",
-        "Mountain Bottom Floor Giant Puzzle",
-
-        "Mountain Final Room Left Pillar 4",
-        "Mountain Final Room Right Pillar 4",
-    }
-
-    MOUNTAIN_EXTRAS = {
-        "Challenge Vault Box",
-        "Theater Challenge Video",
-        "Mountain Bottom Floor Discard"
     }
 
     ALL_LOCATIONS_TO_ID = dict()
@@ -465,38 +493,6 @@ class WitnessPlayerLocations:
         self.PANEL_TYPES_TO_SHUFFLE = {"General", "Laser"}
         self.CHECK_LOCATIONS = StaticWitnessLocations.GENERAL_LOCATIONS.copy()
 
-        doors = get_option_value(world, player, "shuffle_doors") >= 2
-        earlyutm = is_option_enabled(world, player, "early_secret_area")
-        victory = get_option_value(world, player, "victory_condition")
-        mount_lasers = get_option_value(world, player, "mountain_lasers")
-        chal_lasers = get_option_value(world, player, "challenge_lasers")
-        # laser_shuffle = get_option_value(world, player, "shuffle_lasers")
-
-        postgame = set()
-        postgame = postgame | StaticWitnessLocations.CAVES_LOCATIONS
-        postgame = postgame | StaticWitnessLocations.MOUNTAIN_REACHABLE_FROM_BEHIND
-        postgame = postgame | StaticWitnessLocations.MOUNTAIN_UNREACHABLE_FROM_BEHIND
-        postgame = postgame | StaticWitnessLocations.MOUNTAIN_EXTRAS
-
-        self.CHECK_LOCATIONS = self.CHECK_LOCATIONS | postgame
-
-        mountain_enterable_from_top = victory == 0 or victory == 1 or (victory == 3 and chal_lasers > mount_lasers)
-
-        if earlyutm or doors:  # in non-doors, there is no way to get symbol-locked by the final pillars (currently)
-            postgame -= StaticWitnessLocations.CAVES_LOCATIONS
-
-        if (doors or earlyutm) and (victory == 0 or (victory == 2 and mount_lasers > chal_lasers)):
-            postgame -= {"Challenge Vault Box", "Theater Challenge Video"}
-
-        if doors or mountain_enterable_from_top:
-            postgame -= StaticWitnessLocations.MOUNTAIN_REACHABLE_FROM_BEHIND
-
-        if mountain_enterable_from_top:
-            postgame -= StaticWitnessLocations.MOUNTAIN_UNREACHABLE_FROM_BEHIND
-
-        if (victory == 0 and doors) or victory == 1 or (victory == 2 and mount_lasers > chal_lasers and doors):
-            postgame -= {"Mountain Bottom Floor Discard"}
-
         if is_option_enabled(world, player, "shuffle_discarded_panels"):
             self.PANEL_TYPES_TO_SHUFFLE.add("Discard")
 
@@ -515,19 +511,11 @@ class WitnessPlayerLocations:
 
         self.CHECK_LOCATIONS = self.CHECK_LOCATIONS | player_logic.ADDED_CHECKS
 
-        if not is_option_enabled(world, player, "shuffle_postgame"):
-            self.CHECK_LOCATIONS -= postgame
-
-        self.CHECK_LOCATIONS -= {
-            StaticWitnessLogic.CHECKS_BY_HEX[panel]["checkName"]
-            for panel in player_logic.PRECOMPLETED_LOCATIONS
-        }
-
         self.CHECK_LOCATIONS.discard(StaticWitnessLogic.CHECKS_BY_HEX[player_logic.VICTORY_LOCATION]["checkName"])
 
         self.CHECK_LOCATIONS = self.CHECK_LOCATIONS - {
             StaticWitnessLogic.CHECKS_BY_HEX[check_hex]["checkName"]
-            for check_hex in player_logic.COMPLETELY_DISABLED_CHECKS
+            for check_hex in player_logic.COMPLETELY_DISABLED_CHECKS | player_logic.PRECOMPLETED_LOCATIONS
         }
 
         self.CHECK_PANELHEX_TO_ID = {

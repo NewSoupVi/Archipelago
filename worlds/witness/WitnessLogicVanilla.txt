@@ -112,12 +112,12 @@ Door - 0x18269 (Upper) - 0x1C349
 159000 - 0x0332B (Glass Factory Black Line Reflection EP) - True - True
 
 Symmetry Island Upper (Symmetry Island):
-158065 - 0x00A52 (Yellow 1) - True - Symmetry & Colored Dots
-158066 - 0x00A57 (Yellow 2) - 0x00A52 - Symmetry & Colored Dots
-158067 - 0x00A5B (Yellow 3) - 0x00A57 - Symmetry & Colored Dots
-158068 - 0x00A61 (Blue 1) - 0x00A52 - Symmetry & Colored Dots
-158069 - 0x00A64 (Blue 2) - 0x00A61 & 0x00A52 - Symmetry & Colored Dots
-158070 - 0x00A68 (Blue 3) - 0x00A64 & 0x00A57 - Symmetry & Colored Dots
+158065 - 0x00A52 (Laser Yellow 1) - True - Symmetry & Colored Dots
+158066 - 0x00A57 (Laser Yellow 2) - 0x00A52 - Symmetry & Colored Dots
+158067 - 0x00A5B (Laser Yellow 3) - 0x00A57 - Symmetry & Colored Dots
+158068 - 0x00A61 (Laser Blue 1) - 0x00A52 - Symmetry & Colored Dots
+158069 - 0x00A64 (Laser Blue 2) - 0x00A61 & 0x00A52 - Symmetry & Colored Dots
+158070 - 0x00A68 (Laser Blue 3) - 0x00A64 & 0x00A57 - Symmetry & Colored Dots
 158700 - 0x0360D (Laser Panel) - 0x00A68 - True
 Laser - 0x00509 (Laser) - 0x0360D
 159001 - 0x03367 (Glass Factory Black Line EP) - True - True
@@ -469,8 +469,8 @@ Door - 0x0A0C9 (Cargo Box Entry) - 0x0A0C8
 158238 - 0x28AC0 (Wooden Roof Lower Row 4) - 0x28ABF - Rotated Shapers & Dots & Full Dots
 158239 - 0x28AC1 (Wooden Roof Lower Row 5) - 0x28AC0 - Rotated Shapers & Dots & Full Dots
 Door - 0x034F5 (Wooden Roof Stairs) - 0x28AC1
-158225 - 0x28998 (Tinted Glass Door Panel) - True - Stars & Rotated Shapers
-Door - 0x28A61 (Tinted Glass Door) - 0x28998
+158225 - 0x28998 (RGB House Entry Panel) - True - Stars & Rotated Shapers
+Door - 0x28A61 (RGB House Entry) - 0x28998
 158226 - 0x28A0D (Church Entry Panel) - 0x28A61 - Stars
 Door - 0x03BB0 (Church Entry) - 0x28A0D
 158228 - 0x28A79 (Maze Stair Control) - True - True

@@ -103,7 +103,7 @@ def get_adjustment_file(adjustment_file):
 
 
 def get_disable_unrandomized_list():
-    return get_adjustment_file("settings/Disable_Unrandomized.txt")
+    return get_adjustment_file("settings/Exclusions/Disable_Unrandomized.txt")
 
 
 def get_early_utm_list():
@@ -114,21 +114,32 @@ def get_symbol_shuffle_list():
     return get_adjustment_file("settings/Symbol_Shuffle.txt")
 
 
-def get_door_panel_shuffle_list():
-    return get_adjustment_file("settings/Door_Panel_Shuffle.txt")
+def get_complex_doors():
+    return get_adjustment_file("settings/Door_Shuffle/Complex_Doors.txt")
 
 
-def get_doors_simple_list():
-    return get_adjustment_file("settings/Doors_Simple.txt")
+def get_simple_doors():
+    return get_adjustment_file("settings/Door_Shuffle/Simple_Doors.txt")
 
 
-def get_doors_complex_list():
-    return get_adjustment_file("settings/Doors_Complex.txt")
+def get_complex_door_panels():
+    return get_adjustment_file("settings/Door_Shuffle/Complex_Door_Panels.txt")
 
 
-def get_doors_max_list():
-    return get_adjustment_file("settings/Doors_Max.txt")
+def get_complex_additional_panels():
+    return get_adjustment_file("settings/Door_Shuffle/Complex_Additional_Panels.txt")
 
+
+def get_simple_panels():
+    return get_adjustment_file("settings/Door_Shuffle/Simple_Panels.txt")
+
+
+def get_simple_additional_panels():
+    return get_adjustment_file("settings/Door_Shuffle/Simple_Additional_Panels.txt")
+
+
+def get_boat():
+    return get_adjustment_file("settings/Door_Shuffle/Boat.txt")
 
 def get_laser_shuffle():
     return get_adjustment_file("settings/Laser_Shuffle.txt")
@@ -154,16 +165,40 @@ def get_ep_no_eclipse():
     return get_adjustment_file("settings/EP_Shuffle/EP_NoEclipse.txt")
 
 
-def get_ep_no_caves():
-    return get_adjustment_file("settings/EP_Shuffle/EP_NoCavesEPs.txt")
+def get_vault_exclusion_list():
+    return get_adjustment_file("settings/Exclusions/Vaults.txt")
 
 
-def get_ep_no_mountain():
-    return get_adjustment_file("settings/EP_Shuffle/EP_NoMountainEPs.txt")
+def get_discard_exclusion_list():
+    return get_adjustment_file("settings/Exclusions/Discards.txt")
 
 
-def get_ep_no_videos():
-    return get_adjustment_file("settings/EP_Shuffle/EP_Videos.txt")
+def get_caves_exclusion_list():
+    return get_adjustment_file("settings/Postgame/Caves.txt")
+
+
+def get_beyond_challenge_exclusion_list():
+    return get_adjustment_file("settings/Postgame/Beyond_Challenge.txt")
+
+
+def get_bottom_floor_discard_exclusion_list():
+    return get_adjustment_file("settings/Postgame/Bottom_Floor_Discard.txt")
+
+
+def get_mountain_upper_exclusion_list():
+    return get_adjustment_file("settings/Postgame/Mountain_Upper.txt")
+
+
+def get_challenge_vault_box_exclusion_list():
+    return get_adjustment_file("settings/Postgame/Challenge_Vault_Box.txt")
+
+
+def get_path_to_challenge_exclusion_list():
+    return get_adjustment_file("settings/Postgame/Path_To_Challenge.txt")
+
+
+def get_mountain_lower_exclusion_list():
+    return get_adjustment_file("settings/Postgame/Mountain_Lower.txt")
 
 
 def get_sigma_normal_logic():
