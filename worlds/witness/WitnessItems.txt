@@ -20,13 +20,12 @@ Symbols:
 
 Useful:
 510 - Puzzle Skip
-#511 - Energy Capacity
+511 - Energy Capacity
 
 Filler:
-500 - Speed Boost - 1
-#501 - Energy Fill (Small) - 6
-#502 - Energy Fill - 3
-#503 - Energy Fill (Max) - 1
+500 - Energy Fill - 7
+501 - Energy Fill (Small) - 8
+502 - Full Energy Refill - 1
 
 Traps:
 600 - Slowness - 8
