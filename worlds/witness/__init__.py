@@ -79,6 +79,13 @@ class WitnessWorld(World):
             'precompleted_puzzles': [int(h, 16) for h in
                                      self.player_logic.EXCLUDED_LOCATIONS | self.player_logic.PRECOMPLETED_LOCATIONS],
             'entity_to_name': StaticWitnessLogic.ENTITY_ID_TO_NAME,
+
+            # Playtest config parameters to send to the client.
+            'playtest_boost_duration': 20,
+            'playtest_num_charges_per_full_boost': 20,
+            'playtest_num_charges_per_small_fill_base': 4,
+            'playtest_num_charges_per_small_fill_scaling': 1,
+            'playtest_num_starting_boost_capacity': 1
         }
 
     def generate_early(self):

@@ -14,8 +14,6 @@ from .static_logic import ItemDefinition, DoorItemDefinition, ProgressiveItemDef
     StaticWitnessLogic, WeightedItemDefinition
 from .utils import build_weighted_int_list
 
-NUM_ENERGY_UPGRADES = 4
-
 
 @dataclass()
 class ItemData:
@@ -136,7 +134,7 @@ class WitnessPlayerItems:
             if item_name in StaticWitnessItems.special_usefuls:
                 continue
             elif item_name == "Energy Capacity":
-                self._mandatory_items[item_name] = NUM_ENERGY_UPGRADES
+                self._mandatory_items[item_name] = 6
             elif isinstance(item_data.classification, ProgressiveItemDefinition):
                 self._mandatory_items[item_name] = len(item_data.mappings)
             else:
