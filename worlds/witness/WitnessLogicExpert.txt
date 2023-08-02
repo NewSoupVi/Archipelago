@@ -262,7 +262,7 @@ Quarry Stoneworks Upper Floor (Quarry Stoneworks) - Quarry Stoneworks Middle Flo
 158139 - 0x3C12D (Upper Row 6) - 0x0146C - Squares & Colored Squares & Eraser & Stars & Stars + Same Colored Symbol
 158140 - 0x03686 (Upper Row 7) - 0x3C12D - Squares & Colored Squares & Eraser & Stars & Stars + Same Colored Symbol
 158141 - 0x014E9 (Upper Row 8) - 0x03686 - Squares & Colored Squares & Eraser & Stars & Stars + Same Colored Symbol
-158142 - 0x03677 (Stair Control) - True - Squares & Colored Squares & Eraser
+158142 - 0x03677 (Stairs Control) - True - Squares & Colored Squares & Eraser
 Door - 0x0368A (Stairs) - 0x03677
 158143 - 0x3C125 (Control Room Left) - 0x014E9 - Squares & Black/White Squares & Dots & Full Dots & Eraser
 158144 - 0x0367C (Control Room Right) - 0x014E9 - Squares & Colored Squares & Triangles & Eraser & Stars & Stars + Same Colored Symbol
@@ -473,7 +473,7 @@ Door - 0x034F5 (Wooden Roof Stairs) - 0x28AC1
 Door - 0x28A61 (RGB House Entry) - 0x28A0D
 158226 - 0x28A0D (Church Entry Panel) - 0x28998 - Stars
 Door - 0x03BB0 (Church Entry) - 0x03C08
-158228 - 0x28A79 (Maze Stair Control) - True - True
+158228 - 0x28A79 (Maze Panel) - True - True
 Door - 0x28AA2 (Maze Stairs) - 0x28A79
 158241 - 0x17F5F (Windmill Entry Panel) - True - Dots
 Door - 0x1845B (Windmill Entry) - 0x17F5F
@@ -676,7 +676,7 @@ Swamp Near Platform (Swamp) - Swamp Cyan Underwater - 0x04B7F - Swamp Near Boat 
 158316 - 0x00990 (Platform Row 4) - 0x0098F - Rotated Shapers
 Door - 0x184B7 (Between Bridges First Door) - 0x00990
 158317 - 0x17C0D (Platform Shortcut Left Panel) - True - Rotated Shapers
-158318 - 0x17C0E (Platform Shortcut Right Panel) - True - Rotated Shapers
+158318 - 0x17C0E (Platform Shortcut Right Panel) - 0x17C0D - Rotated Shapers
 Door - 0x38AE6 (Platform Shortcut Door) - 0x17C0E
 Door - 0x04B7F (Cyan Water Pump) - 0x00006
 
@@ -802,7 +802,7 @@ Treehouse Right Orange Bridge (Treehouse) - Treehouse Bridge Platform - 0x17DA2:
 158402 - 0x17DA2 (Right Orange Bridge 12) - 0x17DB1 - Stars & Stars + Same Colored Symbol & Triangles
 
 Treehouse Bridge Platform (Treehouse) - Main Island - 0x0C32D:
-158404 - 0x037FF (Bridge Control) - True - Stars
+158404 - 0x037FF (Drawbridge Panel) - True - Stars
 Door - 0x0C32D (Drawbridge) - 0x037FF
 
 Treehouse Second Purple Bridge (Treehouse) - Treehouse Left Orange Bridge - 0x17DC6:

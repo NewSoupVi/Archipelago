@@ -46,13 +46,13 @@ class WitnessLogic(LogicMixin):
         Determines whether a panel can be solved
         """
 
-        panel_obj = StaticWitnessLogic.CHECKS_BY_HEX[panel]
-        check_name = panel_obj["checkName"]
+        panel_obj = StaticWitnessLogic.ENTITIES_BY_HEX[panel]
+        entity_name = panel_obj["checkName"]
 
-        if (check_name + " Solved" in locat.EVENT_LOCATION_TABLE
-                and not self.has(player_logic.EVENT_ITEM_PAIRS[check_name + " Solved"], player)):
+        if (entity_name + " Solved" in locat.EVENT_LOCATION_TABLE
+                and not self.has(player_logic.EVENT_ITEM_PAIRS[entity_name + " Solved"], player)):
             return False
-        if (check_name + " Solved" not in locat.EVENT_LOCATION_TABLE
+        if (entity_name + " Solved" not in locat.EVENT_LOCATION_TABLE
                 and not self._witness_meets_item_requirements(panel, world, player, player_logic, locat)):
             return False
         return True
@@ -214,7 +214,7 @@ def set_rules(world: MultiWorld, player: int, player_logic: WitnessPlayerLogic, 
         if location in locat.EVENT_LOCATION_TABLE:
             real_location = location[:-7]
 
-        panel = StaticWitnessLogic.CHECKS_BY_NAME[real_location]
+        panel = StaticWitnessLogic.ENTITIES_BY_NAME[real_location]
         check_hex = panel["checkHex"]
 
         rule = make_lambda(check_hex, world, player, player_logic, locat)

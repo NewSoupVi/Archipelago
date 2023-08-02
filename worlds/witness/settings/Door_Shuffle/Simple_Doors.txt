@@ -1,44 +1,33 @@
 Items:
-Glass Factory Back Wall (Door)
-Quarry Boathouse Dock (Door)
 Outside Tutorial Outpost Doors
-Glass Factory Entry (Door)
+Glass Factory Doors
 Symmetry Island Doors
 Orchard Gates
 Desert Doors
-Quarry Main Entry
-Quarry Stoneworks Entry (Door)
-Quarry Stoneworks Shortcuts
-Quarry Boathouse Barriers
-Shadows Timed Door
-Shadows Laser Room Door
-Shadows Barriers
+Quarry Entry Doors
+Quarry Stoneworks Doors
+Quarry Boathouse Doors
+Shadows Laser Room Doors
+Shadows Lower Doors
 Keep Hedge Maze Doors
 Keep Pressure Plates Doors
 Keep Shortcuts
-Monastery Entry
+Monastery Entry Doors
 Monastery Shortcuts
 Town Doors
 Town Tower Doors
-Theater Entry (Door)
-Theater Exit
-Jungle & River Shortcuts
-Jungle Popup Wall (Door)
+Windmill & Theater Doors
+Jungle Doors
 Bunker Doors
 Swamp Doors
-Swamp Laser Shortcut (Door)
+Swamp Shortcuts
 Swamp Water Pumps
 Treehouse Entry Doors
-Treehouse Drawbridge (Door)
-Treehouse Laser House Entry (Door)
-Mountain Floor 1 Exit (Door)
-Mountain Floor 2 Stairs & Doors
-Mountain Bottom Floor Giant Puzzle Exit (Door)
-Mountain Bottom Floor Final Room Entry (Door)
-Mountain Bottom Floor Doors to Caves
-Caves Doors to Challenge
-Caves Exits to Main Island
-Challenge Tunnels Entry (Door)
+Treehouse Upper Doors
+Mountain Floor 1&2 Doors
+Mountain Bottom Floor Doors
+Caves Doors
+Caves Shortcuts
 Tunnels Doors
 
 Added Locations:
@@ -60,7 +49,7 @@ Quarry Stoneworks Entry Right Panel
 Quarry Stoneworks Entry Left Panel
 Quarry Stoneworks Side Exit Panel
 Quarry Stoneworks Roof Exit Panel
-Quarry Stoneworks Stair Control
+Quarry Stoneworks Stairs Control
 Quarry Boathouse Second Barrier Panel
 Shadows Door Timer Inside
 Shadows Door Timer Outside
@@ -86,7 +75,7 @@ Town Cargo Box Entry Panel
 Town Wooden Roof Lower Row 5
 Town RGB House Entry Panel
 Town Church Entry Panel
-Town Maze Stair Control
+Town Maze Panel
 Town Windmill Entry Panel
 Town Sound Room Right
 Town Red Rooftop 5
@@ -116,7 +105,7 @@ Swamp Laser Shortcut Right Panel
 Treehouse First Door Panel
 Treehouse Second Door Panel
 Treehouse Third Door Panel
-Treehouse Bridge Control
+Treehouse Drawbridge Panel
 Treehouse Left Orange Bridge 15
 Treehouse Right Orange Bridge 12
 Treehouse Laser House Door Timer Outside Control

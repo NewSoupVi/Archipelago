@@ -83,7 +83,7 @@ Doors:
 1220 - Mountain Floor 1 Light Bridge (Panel) - 0x09E39
 1225 - Mountain Floor 2 Light Bridge Near (Panel) - 0x09E86
 1230 - Mountain Floor 2 Light Bridge Far (Panel) - 0x09ED8
-1235 - Mountain Floor 2 Elevator (Panel) - 0x09EEB
+1235 - Mountain Floor 2 Elevator Control (Panel) - 0x09EEB
 1240 - Caves Entry (Panel) - 0x00FF8
 1242 - Caves Elevator Control (Panel) - 0x335AB,0x335AC,0x3369D
 1245 - Challenge Entry (Panel) - 0x0A16E
@@ -192,32 +192,35 @@ Doors:
 1870 - Tunnels Town Shortcut (Door) - 0x09E87
 
 1903 - Outside Tutorial Outpost Doors - 0x03BA2,0x0A170,0x04CA3
+1904 - Glass Factory Doors - 0x0D7ED,0x01A29
 1906 - Symmetry Island Doors - 0x17F3E,0x18269
 1909 - Orchard Gates - 0x03313,0x03307
 1912 - Desert Doors - 0x09FEE,0x0C2C3,0x0A24B,0x0C316
-1915 - Quarry Main Entry - 0x09D6F,0x17C07
-1918 - Quarry Stoneworks Shortcuts - 0x17CE8,0x0368A,0x275FF
-1921 - Quarry Boathouse Barriers - 0x17C50,0x3865F
-1924 - Shadows Laser Room Door - 0x194B2,0x19665
-1927 - Shadows Barriers - 0x19865,0x0A2DF,0x1855B,0x19ADE
+1915 - Quarry Entry Doors - 0x09D6F,0x17C07
+1918 - Quarry Stoneworks Doors - 0x02010,0x275FF,0x17CE8,0x0368A
+1921 - Quarry Boathouse Doors - 0x17C50,0x3865F,0x2769B,0x27163
+1924 - Shadows Laser Room Doors - 0x194B2,0x19665
+1927 - Shadows Lower Doors - 0x19865,0x0A2DF,0x1855B,0x19ADE,0x19B24
 1930 - Keep Hedge Maze Doors - 0x01954,0x018CE,0x019D8,0x019B5,0x019E6,0x0199A,0x01A0E
 1933 - Keep Pressure Plates Doors - 0x01BEC,0x01BEA,0x01CD5,0x01D40
 1936 - Keep Shortcuts - 0x09E3D,0x04F8F
-1939 - Monastery Entry - 0x0C128,0x0C153
-1942 - Monastery Shortcuts - 0x0364E,0x03750
+1939 - Monastery Entry Doors - 0x0C128,0x0C153
+1942 - Monastery Shortcuts - 0x0364E,0x03750,0x0CF2A
 1945 - Town Doors - 0x0A0C9,0x034F5,0x28A61,0x03BB0,0x28AA2,0x1845B,0x2897B
 1948 - Town Tower Doors - 0x27798,0x27799,0x2779A,0x2779C
-1951 - Theater Exit - 0x0A16D,0x3CCDF
-1954 - Jungle & River Shortcuts - 0x3873B,0x0CF2A
+1951 - Windmill & Theater Doors - 0x0A16D,0x3CCDF,0x1845B,0x17F88
+1954 - Jungle Doors - 0x3873B,0x1475B
 1957 - Bunker Doors - 0x0C2A4,0x17C79,0x0C2A3,0x0A08D
-1960 - Swamp Doors - 0x00C1C,0x184B7,0x38AE6,0x18507
+1960 - Swamp Doors - 0x00C1C,0x184B7,0x18507
+1961 - Swamp Shortcuts - 0x38AE6,0x2D880
 1963 - Swamp Water Pumps - 0x04B7F,0x183F2,0x305D5,0x18482,0x0A1D6
 1966 - Treehouse Entry Doors - 0x0C309,0x0C310,0x0A181
-1975 - Mountain Floor 2 Stairs & Doors - 0x09FFB,0x09EDD,0x09E07
-1978 - Mountain Bottom Floor Doors to Caves - 0x17F33,0x2D77D
-1981 - Caves Doors to Challenge - 0x019A5,0x0A19A
-1984 - Caves Exits to Main Island - 0x2D859,0x2D73F
-1987 - Tunnels Doors - 0x27739,0x27263,0x09E87
+1969 - Treehouse Upper Doors - 0x0C323,0x0C32D
+1975 - Mountain Floor 1&2 Doors - 0x09E54,0x09FFB,0x09EDD,0x09E07
+1978 - Mountain Bottom Floor Doors - 0x0C141,0x17F33,0x09F89
+1981 - Caves Doors - 0x019A5,0x0A19A,0x2D77D
+1984 - Caves Shortcuts - 0x2D859,0x2D73F
+1987 - Tunnels Doors - 0x27739,0x27263,0x09E87,0x0348A
 
 Lasers:
 1500 - Symmetry Laser - 0x00509

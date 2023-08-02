@@ -115,7 +115,7 @@ Quarry Stoneworks Entry Right Panel
 Quarry Stoneworks Entry Left Panel
 Quarry Stoneworks Side Exit Panel
 Quarry Stoneworks Roof Exit Panel
-Quarry Stoneworks Stair Control
+Quarry Stoneworks Stairs Control
 Quarry Boathouse Second Barrier Panel
 Shadows Door Timer Inside
 Shadows Door Timer Outside
@@ -141,7 +141,7 @@ Town Cargo Box Entry Panel
 Town Wooden Roof Lower Row 5
 Town RGB House Entry Panel
 Town Church Entry Panel
-Town Maze Stair Control
+Town Maze Panel
 Town Windmill Entry Panel
 Town Sound Room Right
 Town Red Rooftop 5
@@ -171,7 +171,7 @@ Swamp Laser Shortcut Right Panel
 Treehouse First Door Panel
 Treehouse Second Door Panel
 Treehouse Third Door Panel
-Treehouse Bridge Control
+Treehouse Drawbridge Panel
 Treehouse Left Orange Bridge 15
 Treehouse Right Orange Bridge 12
 Treehouse Laser House Door Timer Outside Control

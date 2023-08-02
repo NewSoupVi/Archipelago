@@ -73,25 +73,25 @@ class StaticWitnessLogicObj:
 
             location_id = line_split.pop(0)
 
-            check_name_full = line_split.pop(0)
+            entity_name_full = line_split.pop(0)
 
-            check_hex = check_name_full[0:7]
-            check_name = check_name_full[9:-1]
+            check_hex = entity_name_full[0:7]
+            entity_name = entity_name_full[9:-1]
 
             required_panel_lambda = line_split.pop(0)
 
-            full_check_name = current_region["shortName"] + " " + check_name
+            full_entity_name = current_region["shortName"] + " " + entity_name
 
             if location_id == "Door" or location_id == "Laser":
-                self.CHECKS_BY_HEX[check_hex] = {
-                    "checkName": full_check_name,
+                self.ENTITIES_BY_HEX[check_hex] = {
+                    "checkName": full_entity_name,
                     "checkHex": check_hex,
                     "region": current_region,
                     "id": None,
-                    "panelType": location_id
+                    "entityType": location_id
                 }
 
-                self.CHECKS_BY_NAME[self.CHECKS_BY_HEX[check_hex]["checkName"]] = self.CHECKS_BY_HEX[check_hex]
+                self.ENTITIES_BY_NAME[self.ENTITIES_BY_HEX[check_hex]["checkName"]] = self.ENTITIES_BY_HEX[check_hex]
 
                 self.STATIC_DEPENDENT_REQUIREMENTS_BY_HEX[check_hex] = {
                     "panels": parse_lambda(required_panel_lambda)
@@ -108,18 +108,18 @@ class StaticWitnessLogicObj:
                 "Laser Pressure Plates",
                 "Desert Laser Redirect"
             }
-            is_vault_or_video = "Vault" in check_name or "Video" in check_name
+            is_vault_or_video = "Vault" in entity_name or "Video" in entity_name
 
-            if "Discard" in check_name:
+            if "Discard" in entity_name:
                 location_type = "Discard"
-            elif is_vault_or_video or check_name == "Tutorial Gate Close":
+            elif is_vault_or_video or entity_name == "Tutorial Gate Close":
                 location_type = "Vault"
-            elif check_name in laser_names:
+            elif entity_name in laser_names:
                 location_type = "Laser"
-            elif "Obelisk Side" in check_name:
+            elif "Obelisk Side" in entity_name:
                 location_type = "Obelisk Side"
-                full_check_name = check_name
-            elif "EP" in check_name:
+                full_entity_name = entity_name
+            elif "EP" in entity_name:
                 location_type = "EP"
             else:
                 location_type = "General"
@@ -144,17 +144,17 @@ class StaticWitnessLogicObj:
                 for ep_hex in eps:
                     self.EP_TO_OBELISK_SIDE[ep_hex] = check_hex
 
-            self.CHECKS_BY_HEX[check_hex] = {
-                "checkName": full_check_name,
+            self.ENTITIES_BY_HEX[check_hex] = {
+                "checkName": full_entity_name,
                 "checkHex": check_hex,
                 "region": current_region,
                 "id": int(location_id),
-                "panelType": location_type
+                "entityType": location_type
             }
 
-            self.ENTITY_ID_TO_NAME[check_hex] = full_check_name
+            self.ENTITY_ID_TO_NAME[check_hex] = full_entity_name
 
-            self.CHECKS_BY_NAME[self.CHECKS_BY_HEX[check_hex]["checkName"]] = self.CHECKS_BY_HEX[check_hex]
+            self.ENTITIES_BY_NAME[self.ENTITIES_BY_HEX[check_hex]["checkName"]] = self.ENTITIES_BY_HEX[check_hex]
             self.STATIC_DEPENDENT_REQUIREMENTS_BY_HEX[check_hex] = requirement
 
             current_region["panels"].append(check_hex)
@@ -164,8 +164,8 @@ class StaticWitnessLogicObj:
         self.ALL_REGIONS_BY_NAME = dict()
         self.STATIC_CONNECTIONS_BY_REGION_NAME = dict()
 
-        self.CHECKS_BY_HEX = dict()
-        self.CHECKS_BY_NAME = dict()
+        self.ENTITIES_BY_HEX = dict()
+        self.ENTITIES_BY_NAME = dict()
         self.STATIC_DEPENDENT_REQUIREMENTS_BY_HEX = dict()
 
         self.OBELISK_SIDE_ID_TO_EP_HEXES = dict()
@@ -187,8 +187,8 @@ class StaticWitnessLogic:
 
     OBELISK_SIDE_ID_TO_EP_HEXES = dict()
 
-    CHECKS_BY_HEX = dict()
-    CHECKS_BY_NAME = dict()
+    ENTITIES_BY_HEX = dict()
+    ENTITIES_BY_NAME = dict()
     STATIC_DEPENDENT_REQUIREMENTS_BY_HEX = dict()
 
     EP_TO_OBELISK_SIDE = dict()
@@ -262,8 +262,8 @@ class StaticWitnessLogic:
         self.ALL_REGIONS_BY_NAME.update(self.sigma_normal.ALL_REGIONS_BY_NAME)
         self.STATIC_CONNECTIONS_BY_REGION_NAME.update(self.sigma_normal.STATIC_CONNECTIONS_BY_REGION_NAME)
 
-        self.CHECKS_BY_HEX.update(self.sigma_normal.CHECKS_BY_HEX)
-        self.CHECKS_BY_NAME.update(self.sigma_normal.CHECKS_BY_NAME)
+        self.ENTITIES_BY_HEX.update(self.sigma_normal.ENTITIES_BY_HEX)
+        self.ENTITIES_BY_NAME.update(self.sigma_normal.ENTITIES_BY_NAME)
         self.STATIC_DEPENDENT_REQUIREMENTS_BY_HEX.update(self.sigma_normal.STATIC_DEPENDENT_REQUIREMENTS_BY_HEX)
 
         self.OBELISK_SIDE_ID_TO_EP_HEXES.update(self.sigma_normal.OBELISK_SIDE_ID_TO_EP_HEXES)

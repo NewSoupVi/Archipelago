@@ -1,12 +1,12 @@
 Event Items:
-Monastery Laser Activation - 0x00A5B,0x17CE7,0x17FA9,0x17CA4
+Monastery Laser Activation - 0x00A5B,0x17CE7,0x17FA9
 Bunker Laser Activation - 0x00061,0x17D01,0x17C42
 Shadows Laser Activation - 0x00021,0x17D28,0x17C71
 Town Tower 4th Door Opens - 0x17CFB,0x3C12B,0x17CF7
 Jungle Popup Wall Lifts - 0x17FA0,0x17D27,0x17F9B,0x17CAB
 
 Requirement Changes:
-0x17C65 - 0x00A5B | 0x17CE7 | 0x17FA9 | 0x17CA4
+0x17C65 - 0x00A5B | 0x17CE7 | 0x17FA9
 0x0C2B2 - 0x00061 | 0x17D01 | 0x17C42
 0x181B3 - 0x00021 | 0x17D28 | 0x17C71
 0x17CAB - True - True
@@ -31,6 +31,9 @@ Disabled Locations:
 0x032FF (Orchard Apple Tree 5)
 0x334DB (Door Timer Outside)
 0x334DC (Door Timer Inside)
+0x19B24 (Timed Door) - 0x334DB
+0x194B2 (Laser Entry Right)
+0x19665 (Laser Entry Left)
 0x198B5 (Shadows Intro 1)
 0x198BD (Shadows Intro 2)
 0x198BF (Shadows Intro 3)
@@ -84,6 +87,7 @@ Disabled Locations:
 0x193AA (Monastery Inside 2)
 0x193AB (Monastery Inside 3)
 0x193A6 (Monastery Inside 4)
+0x17CA4 (Monastery Laser Panel)
 0x18590 (Transparent) - True - Symmetry & Environment
 0x28AE3 (Vines) - 0x18590 - Shadows Follow & Environment
 0x28938 (Apple Tree) - 0x28AE3 - Environment
@@ -130,7 +134,6 @@ Disabled Locations:
 
 0x17CAA (River Garden Entry Panel)
 
-Precompleted Locations:
 0x034A7
 0x034AD
 0x034AF
