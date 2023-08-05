@@ -37,7 +37,7 @@ class WitnessPlayerLogic:
         Panels outside of the same region will still be checked manually.
         """
 
-        if panel_hex in self.COMPLETELY_DISABLED_CHECKS:
+        if panel_hex in self.COMPLETELY_DISABLED_CHECKS or panel_hex in self.IRRELEVANT_BUT_NOT_DISABLED_ENTITIES:
             return frozenset()
 
         check_obj = self.REFERENCE_LOGIC.ENTITIES_BY_HEX[panel_hex]
@@ -225,6 +225,26 @@ class WitnessPlayerLogic:
 
             return
 
+        if adj_type == "New Connections":
+            line_split = line.split(" - ")
+            source_region = line_split[0]
+            target_region = line_split[1]
+            panel_set_string = line_split[2]
+
+            for connection in self.CONNECTIONS_BY_REGION_NAME[source_region]:
+                if connection[0] == target_region:
+                    self.CONNECTIONS_BY_REGION_NAME[source_region].remove(connection)
+
+                    if panel_set_string == "TrueOneWay":
+                        self.CONNECTIONS_BY_REGION_NAME[source_region].add((target_region, frozenset({frozenset()})))
+                    else:
+                        new_lambda = connection[1] | parse_lambda(panel_set_string)
+                        self.CONNECTIONS_BY_REGION_NAME[source_region].add((target_region, new_lambda))
+                    break
+            else:  # Execute if loop did not break. TIL this is a thing you can do!
+                new_conn = (target_region, parse_lambda(panel_set_string))
+                self.CONNECTIONS_BY_REGION_NAME[source_region].add(new_conn)
+
         if adj_type == "Added Locations":
             if "0x" in line:
                 line = StaticWitnessLogic.ENTITIES_BY_HEX[line]["checkName"]
@@ -237,7 +257,7 @@ class WitnessPlayerLogic:
         # Postgame
 
         doors = get_option_value(world, player, "shuffle_doors") >= 2
-        earlyutm = is_option_enabled(world, player, "early_secret_area")
+        early_caves = get_option_value(world, player, "early_caves") > 0
         victory = get_option_value(world, player, "victory_condition")
         mnt_lasers = get_option_value(world, player, "mountain_lasers")
         chal_lasers = get_option_value(world, player, "challenge_lasers")
@@ -245,14 +265,14 @@ class WitnessPlayerLogic:
         mountain_enterable_from_top = victory == 0 or victory == 1 or (victory == 3 and chal_lasers > mnt_lasers)
 
         if not is_option_enabled(world, player, "shuffle_postgame"):
-            if not (earlyutm or doors):
+            if not (early_caves or doors):
                 adjustment_linesets_in_order.append(get_caves_exclusion_list())
                 if not victory == 1:
                     adjustment_linesets_in_order.append(get_path_to_challenge_exclusion_list())
                     adjustment_linesets_in_order.append(get_challenge_vault_box_exclusion_list())
                     adjustment_linesets_in_order.append(get_beyond_challenge_exclusion_list())
 
-            if not ((doors or earlyutm) and (victory == 0 or (victory == 2 and mnt_lasers > chal_lasers))):
+            if not ((doors or early_caves) and (victory == 0 or (victory == 2 and mnt_lasers > chal_lasers))):
                 adjustment_linesets_in_order.append(get_beyond_challenge_exclusion_list())
                 if not victory == 1:
                     adjustment_linesets_in_order.append(get_challenge_vault_box_exclusion_list())
@@ -329,8 +349,14 @@ class WitnessPlayerLogic:
         if is_option_enabled(world, player, "shuffle_boat"):
             adjustment_linesets_in_order.append(get_boat())
 
-        if is_option_enabled(world, player, "early_secret_area"):
-            adjustment_linesets_in_order.append(get_early_utm_list())
+        if get_option_value(world, player, "early_caves") == 2:
+            adjustment_linesets_in_order.append(get_early_caves_start_list())
+
+        if get_option_value(world, player, "early_caves") == 1 and not doors:
+            adjustment_linesets_in_order.append(get_early_caves_list())
+
+        if is_option_enabled(world, player, "elevators_come_to_you"):
+            adjustment_linesets_in_order.append(get_elevators_come_to_you())
 
         for item in self.YAML_ADDED_ITEMS:
             adjustment_linesets_in_order.append(["Items:", item])
@@ -338,12 +364,11 @@ class WitnessPlayerLogic:
         if is_option_enabled(world, player, "shuffle_lasers"):
             adjustment_linesets_in_order.append(get_laser_shuffle())
 
-        if get_option_value(world, player, "shuffle_EPs") == 0:  # No EP Shuffle
-            adjustment_linesets_in_order.append(["Disabled Locations:"] + get_ep_all_individual()[1:])
+        if get_option_value(world, player, "shuffle_EPs") != 2:
             adjustment_linesets_in_order.append(["Disabled Locations:"] + get_ep_obelisks()[1:])
 
-        elif get_option_value(world, player, "shuffle_EPs") == 1:  # Individual EPs
-            adjustment_linesets_in_order.append(["Disabled Locations:"] + get_ep_obelisks()[1:])
+        if get_option_value(world, player, "shuffle_EPs") == 0:
+            self.IRRELEVANT_BUT_NOT_DISABLED_ENTITIES.update(get_ep_all_individual()[1:])
 
         yaml_disabled_eps = []
 
@@ -457,6 +482,8 @@ class WitnessPlayerLogic:
         self.EVENT_PANELS_FROM_PANELS = set()
         self.EVENT_PANELS_FROM_REGIONS = set()
 
+        self.IRRELEVANT_BUT_NOT_DISABLED_ENTITIES = set()
+
         self.THEORETICAL_ITEMS = set()
         self.THEORETICAL_ITEMS_NO_MULTI = set()
         self.MULTI_AMOUNTS = dict()
@@ -490,6 +517,8 @@ class WitnessPlayerLogic:
         self.ADDED_CHECKS = set()
         self.VICTORY_LOCATION = "0x0356B"
         self.EVENT_ITEM_NAMES = {
+            "0xFFD00": "Main Island Reached Independently",
+            "0xFFD01": "Inside Quarry Reached Independently",
             "0x09D9B": "Monastery Shutters Open",
             "0x193A6": "Monastery Laser Panel Activates",
             "0x00037": "Monastery Branch Panels Activate",

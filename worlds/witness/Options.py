@@ -15,10 +15,16 @@ class DisableNonRandomizedPuzzles(Toggle):
     display_name = "Disable non randomized puzzles"
 
 
-class EarlySecretArea(Toggle):
-    """Opens the Mountainside shortcut to the Caves from the start.
-    (Otherwise known as "UTM", "Caves" or the "Challenge Area")"""
+class EarlyCaves(Choice):
+    """Adds an item that opens the Caves Shortcuts to Swamp and Mountain,
+    allowing early access to the Caves even if you are not playing a remote Door Shuffle mode.
+    You can either add this item to the pool to be found on one of your randomized checks,
+    or you can outright start with it and have immediate access to the Caves.
+    If you choose "add_to_pool" and you are already playing a remote Door Shuffle mode, this setting will do nothing."""
     display_name = "Early Caves"
+    option_off = 0
+    option_add_to_pool = 1
+    option_starting_inventory = 2
 
 
 class ShuffleSymbols(DefaultOnToggle):
@@ -62,7 +68,8 @@ class ShuffleBoat(DefaultOnToggle):
 
 class ShuffleDiscardedPanels(Toggle):
     """Add Discarded Panels into the location pool.
-    Solving certain Discarded Panels may still be necessary to beat the game, even if this is off."""
+    Solving certain Discarded Panels may still be necessary to beat the game, even if this is off - The main example
+    of this being the alternate activation triggers in disable_non_randomized."""
 
     display_name = "Shuffle Discarded Panels"
 
@@ -146,6 +153,12 @@ class ChallengeLasers(Range):
     default = 11
 
 
+class ElevatorsComeToYou(Toggle):
+    """If true, the Quarry Elevator, Bunker Elevator and Swamp Long Bridge will "come to you" if you approach them.
+    This does actually affect logic as it allows unintended backwards / early access into these areas."""
+    display_name = "All Bridges & Elevators come to you"
+
+
 class TrapPercentage(Range):
     """Replaces junk items with traps, at the specified rate."""
     display_name = "Trap Percentage"
@@ -164,8 +177,8 @@ class PuzzleSkipAmount(Range):
 
 
 class HintAmount(Range):
-    """Adds hints to Audio Logs. Hints will have the same number of duplicates, as many as will fit. Remaining Audio
-    Logs will have junk hints."""
+    """Adds hints to Audio Logs. If set to a low amount, up to 2 additional duplicates of each hint will be added.
+    Remaining Audio Logs will have junk hints."""
     display_name = "Hints on Audio Logs"
     range_start = 0
     range_end = 49
@@ -194,7 +207,8 @@ the_witness_options: Dict[str, type] = {
     "victory_condition": VictoryCondition,
     "mountain_lasers": MountainLasers,
     "challenge_lasers": ChallengeLasers,
-    "early_secret_area": EarlySecretArea,
+    "early_caves": EarlyCaves,
+    "elevators_come_to_you": ElevatorsComeToYou,
     "trap_percentage": TrapPercentage,
     "puzzle_skip_amount": PuzzleSkipAmount,
     "hint_amount": HintAmount,
