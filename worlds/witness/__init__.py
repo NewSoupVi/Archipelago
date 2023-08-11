@@ -81,11 +81,12 @@ class WitnessWorld(World):
             'entity_to_name': StaticWitnessLogic.ENTITY_ID_TO_NAME,
 
             # Playtest config parameters to send to the client.
+            'playtest_solve_mode_boost_decay_multiplier': 1,
             'playtest_boost_duration': 20,
             'playtest_num_charges_per_full_boost': 20,
-            'playtest_num_charges_per_small_fill_base': 4,
+            'playtest_num_charges_per_small_fill_base': 3,
             'playtest_num_charges_per_small_fill_scaling': 1,
-            'playtest_num_starting_boost_capacity': 1
+            'playtest_num_starting_boost_capacity': 2
         }
 
     def generate_early(self):
@@ -155,7 +156,7 @@ class WitnessWorld(World):
 
         # Add junk items.
         if remaining_item_slots > 0:
-            item_pool.update(self.items.get_filler_items(remaining_item_slots))
+            item_pool.update(self.items.get_filler_items(pool_size, remaining_item_slots))
 
         # Add event items and tie them to event locations (e.g. laser activations).
         for event_location in self.locat.EVENT_LOCATION_TABLE:

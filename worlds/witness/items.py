@@ -13,6 +13,7 @@ from .player_logic import WitnessPlayerLogic
 from .static_logic import ItemDefinition, DoorItemDefinition, ProgressiveItemDefinition, ItemCategory, \
     StaticWitnessLogic, WeightedItemDefinition
 from .utils import build_weighted_int_list
+from logging import info, warning
 
 
 @dataclass()
@@ -134,7 +135,7 @@ class WitnessPlayerItems:
             if item_name in StaticWitnessItems.special_usefuls:
                 continue
             elif item_name == "Energy Capacity":
-                self._mandatory_items[item_name] = 6
+                self._mandatory_items[item_name] = 3
             elif isinstance(item_data.classification, ProgressiveItemDefinition):
                 self._mandatory_items[item_name] = len(item_data.mappings)
             else:
@@ -152,42 +153,69 @@ class WitnessPlayerItems:
         """
         return self._mandatory_items
 
-    def get_filler_items(self, quantity: int) -> Dict[str, int]:
+    def get_filler_items(self, total_pool_size: int, slots_to_fill: int) -> Dict[str, int]:
         """
         Generates a list of filler items of the given length.
         """
-        if quantity <= 0:
+        if slots_to_fill <= 0:
             return {}
 
-        output: Dict[str, int] = {}
-        remaining_quantity = quantity
+        # First, place joke items, since there are a known quantity of those.
+        joke_items: Dict[str, int]
+        joke_items = {name: 1 for (name, data) in self.item_data.items()
+                      if data.definition.category is ItemCategory.JOKE}
 
-        # Add joke items.
-        output.update({name: 1 for (name, data) in self.item_data.items()
-                       if data.definition.category is ItemCategory.JOKE})
-        remaining_quantity -= len(output)
+        # If there's more joke items than slots to fill, scale the list down to the available number and just return
+        #   that.
+        num_joke_items = sum(joke_items.values())
+        if num_joke_items > slots_to_fill:
+            warning("Too few slots to place all joke items.")
+            return zip(joke_items.keys(), build_weighted_int_list(joke_items.values(), slots_to_fill))
+        elif num_joke_items == slots_to_fill:
+            return joke_items
 
-        # Read trap configuration data.
-        trap_weight = get_option_value(self._world, self._player_id, "trap_percentage") / 100
-        filler_weight = 1 - trap_weight
+        slots_to_fill -= num_joke_items
 
-        # Add filler items to the list.
-        filler_items: Dict[str, float]
+        # Next, determine the contents of the filler pool. In order to keep the ratio of energy fills consistent across
+        #   configurations, we want to treat placed items as small energy fills, since solving a check gives the player
+        #   a small fill as a bonus. In order to do so, we generate the filler pool as if there were no non-filler items
+        #   placed, then remove small fills equal to the number of non-filler items.
+        # First, build the core list of filler items, as configured.
+        filler_items: Dict[str, int]
         filler_items = {name: data.definition.weight if isinstance(data.definition, WeightedItemDefinition) else 1
                         for (name, data) in self.item_data.items() if data.definition.category is ItemCategory.FILLER}
-        filler_items = {name: base_weight * filler_weight / sum(filler_items.values())
-                        for name, base_weight in filler_items.items() if base_weight > 0}
 
-        # Add trap items.
+        # Next, add traps to the filler pool, if needed.
+        trap_weight: float = get_option_value(self._world, self._player_id, "trap_percentage") / 100
         if trap_weight > 0:
+            # Since the filler array is of length 1, scale trap_weight to keep the ratio of traps to filler the same.
+            trap_weight = 1 / (sum(filler_items.values()) * (1 - trap_weight))
             trap_items = {name: data.definition.weight if isinstance(data.definition, WeightedItemDefinition) else 1
                           for (name, data) in self.item_data.items() if data.definition.category is ItemCategory.TRAP}
             filler_items.update({name: base_weight * trap_weight / sum(trap_items.values())
                                  for name, base_weight in trap_items.items() if base_weight > 0})
 
-        # Get the actual number of each item by scaling the float weight values to match the target quantity.
-        int_weights: List[int] = build_weighted_int_list(filler_items.values(), remaining_quantity)
-        output.update(zip(filler_items.keys(), int_weights))
+        # Scale the list of filler items to the total size of the pool.
+        filler_items = dict(zip(filler_items.keys(), build_weighted_int_list(filler_items.values(), total_pool_size)))
+
+        # Remove small fills.
+        if "Energy Fill (Small)" in filler_items.keys():
+            small_fills_to_remove: int = total_pool_size - slots_to_fill
+            if filler_items["Energy Fill (Small)"] > small_fills_to_remove:
+                filler_items["Energy Fill (Small)"] -= small_fills_to_remove
+            else:
+                # If there are more items than small fills, remove small fills entirely, then scale the remaining item
+                #   list to the output size.
+                info("There were too few small fills ({0}) in the junk pool to match the number of placed items ({1}). "
+                     "Junk pool composition will be affected.".format(filler_items["Energy Fill (Small)"],
+                                                                      small_fills_to_remove))
+                filler_items.pop("Energy Fill (Small)")
+                filler_items = dict(zip(filler_items.keys(), build_weighted_int_list(filler_items.values(),
+                                                                                     slots_to_fill)))
+
+        output: Dict[str, int] = {}
+        output.update(joke_items)
+        output.update(filler_items)
 
         return output
 

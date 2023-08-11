@@ -23,8 +23,8 @@ Useful:
 511 - Energy Capacity
 
 Filler:
-500 - Energy Fill - 7
-501 - Energy Fill (Small) - 8
+500 - Energy Fill - 5
+501 - Energy Fill (Small) - 12
 502 - Full Energy Refill - 1
 
 Traps:
