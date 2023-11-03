@@ -88,8 +88,11 @@ class TestWorld(World):
 
         for item in self.item_name_to_id:
             if item == "Victory":
-                self.multiworld.get_location("Final Location", self.player).place_locked_item(self.create_item("Victory"))
+                self.multiworld.get_location("Final Location", self.player).place_locked_item(
+                    self.create_item("Victory"))
             else:
                 self.multiworld.itempool.append(self.create_item(item))
 
         self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
+
+#  This test world fails on seed 80818606476286984189 when there is absolutely a valid item placement.
