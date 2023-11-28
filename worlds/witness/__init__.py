@@ -243,7 +243,7 @@ class WitnessWorld(World):
         remaining_item_slots -= num_puzzle_skips
 
         # Add junk items.
-        if remaining_item_slots > 0:
+        if remaining_item_slots:
             item_pool.update(self.items.get_filler_items(remaining_item_slots))
 
         # Generate the actual items.
