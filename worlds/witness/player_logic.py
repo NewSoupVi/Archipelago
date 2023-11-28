@@ -255,8 +255,8 @@ class WitnessPlayerLogic:
         postgame_adjustments = []
 
         # Make some quick references to some options
-        doors = world.options.shuffle_doors >= 2  # "Panels" mode has no overarching region accessibility implications.
-        early_caves = world.options.early_caves > 0
+        doors = world.options.shuffle_doors in {"doors", "mixed"} # "Panels" mode has no overarching region accessibility implications.
+        early_caves = world.options.early_caves
         victory = world.options.victory_condition
         mnt_lasers = world.options.mountain_lasers
         chal_lasers = world.options.challenge_lasers
@@ -332,7 +332,7 @@ class WitnessPlayerLogic:
 
         # Make condensed references to some options
 
-        doors = world.options.shuffle_doors >= 2  # "Panels" mode has no overarching region accessibility implications.
+        doors = world.options.shuffle_doors in {"doors", "mixed"} # "Panels" mode has no overarching region accessibility implications.
         lasers = world.options.shuffle_lasers
         victory = world.options.victory_condition
         chal_lasers = world.options.challenge_lasers
@@ -353,7 +353,7 @@ class WitnessPlayerLogic:
 
         if not world.options.shuffle_vault_boxes:
             adjustment_linesets_in_order.append(get_vault_exclusion_list())
-            if not victory == 1:
+            if not victory == "challenge":
                 adjustment_linesets_in_order.append(get_challenge_vault_box_exclusion_list())
 
         # Victory Condition
