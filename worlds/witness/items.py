@@ -198,14 +198,14 @@ class WitnessPlayerItems:
         filler_items = {name: data.definition.weight if isinstance(data.definition, WeightedItemDefinition) else 1
                         for (name, data) in self.item_data.items() if data.definition.category is ItemCategory.FILLER}
         filler_items = {name: base_weight * filler_weight / sum(filler_items.values())
-                        for name, base_weight in filler_items.items() if base_weight > 0}
+                        for name, base_weight in filler_items.items() if base_weight}
 
         # Add trap items.
-        if trap_weight > 0:
+        if trap_weight:
             trap_items = {name: data.definition.weight if isinstance(data.definition, WeightedItemDefinition) else 1
                           for (name, data) in self.item_data.items() if data.definition.category is ItemCategory.TRAP}
             filler_items.update({name: base_weight * trap_weight / sum(trap_items.values())
-                                 for name, base_weight in trap_items.items() if base_weight > 0})
+                                 for name, base_weight in trap_items.items() if base_weight})
 
         # Get the actual number of each item by scaling the float weight values to match the target quantity.
         int_weights: List[int] = build_weighted_int_list(filler_items.values(), remaining_quantity)
