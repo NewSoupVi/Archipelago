@@ -232,7 +232,7 @@ class StaticWitnessLogic:
                                                                              arguments)
             elif current_category == ItemCategory.TRAP or current_category == ItemCategory.FILLER:
                 # Read filler weights.
-                weight = int(arguments[0]) if len(arguments) >= 1 else 1
+                weight = int(arguments[0]) if arguments else 1
                 StaticWitnessLogic.all_items[item_name] = WeightedItemDefinition(item_code, current_category, weight)
             elif arguments:
                 # Progressive items.
