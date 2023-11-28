@@ -21,7 +21,7 @@ def build_weighted_int_list(inputs: Collection[float], total: int) -> List[int]:
     remainders: List[float] = [real - rounded for real, rounded in zip(scaled_input, rounded_output)]
     while rounded_sum < total:
         max_remainder = max(remainders)
-        if max_remainder == 0:
+        if not max_remainder:
             break
 
         # Consume the remainder and increment the total for the given target.
