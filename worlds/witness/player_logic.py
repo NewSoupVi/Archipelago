@@ -255,7 +255,7 @@ class WitnessPlayerLogic:
         postgame_adjustments = []
 
         # Make some quick references to some options
-        doors = world.options.shuffle_doors in {"doors", "mixed"} # "Panels" mode has no overarching region accessibility implications.
+        doors = world.options.shuffle_doors >= 2 # "Panels" mode has no overarching region accessibility implications.
         early_caves = world.options.early_caves
         victory = world.options.victory_condition
         mnt_lasers = world.options.mountain_lasers
@@ -332,7 +332,7 @@ class WitnessPlayerLogic:
 
         # Make condensed references to some options
 
-        doors = world.options.shuffle_doors in {"doors", "mixed"} # "Panels" mode has no overarching region accessibility implications.
+        doors = world.options.shuffle_doors >= 2 # "Panels" mode has no overarching region accessibility implications.
         lasers = world.options.shuffle_lasers
         victory = world.options.victory_condition
         chal_lasers = world.options.challenge_lasers
