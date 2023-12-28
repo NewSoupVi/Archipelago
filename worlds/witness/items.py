@@ -115,6 +115,18 @@ class WitnessPlayerItems:
         # Adjust item classifications based on game settings.
         eps_shuffled = self._world.options.shuffle_EPs
         come_to_you = self._world.options.elevators_come_to_you
+        difficulty = self._world.options.puzzle_randomization
+        discards_shuffled = self._world.options.shuffle_discarded_panels
+        vaults_shuffled = self._world.options.shuffle_vault_boxes
+        symbols_shuffled = self._world.options.shuffle_symbols
+        doors_setting = self._world.options.shuffle_doors
+        postgame = self._world.options.shuffle_postgame
+        goal = self._world.options.victory_condition
+        shortbox = self._world.options.mountain_lasers
+        longbox = self._world.options.challenge_lasers
+        mountain_upper_excluded = not postgame and (goal == "mountain_box_short" or goal == "mountain_box_long" and \
+            longbox <= shortbox)
+
         for item_name, item_data in self.item_data.items():
             if not eps_shuffled and item_name in {"Monastery Garden Entry (Door)",
                                                   "Monastery Shortcuts",
@@ -130,9 +142,19 @@ class WitnessPlayerItems:
                                "Monastery Laser Shortcut (Door)",
                                "Orchard Second Gate (Door)",
                                "Jungle Bamboo Laser Shortcut (Door)",
-                               "Keep Pressure Plates 2 Exit (Door)",
                                "Caves Elevator Controls (Panel)"}:
                 # Downgrade doors that don't gate progress.
+                item_data.classification = ItemClassification.useful
+            elif item_name == "Keep Pressure Plates 2 Exit (Door)" and not (difficulty == "none" and eps_shuffled):
+                # PP2EP requires the door in vanilla puzzles, otherwise it's unnecessary
+                item_data.classification = ItemClassification.useful
+            elif item_name == "Town Cargo Box Entry (Door)" and not (eps_shuffled or discards_shuffled or disable_non_randomized):
+                item_data.classification = ItemClassification.useful
+            elif item_name == "Windmill & Theater Control Panels" and not (eps_shuffled or vaults_shuffled and disable_non_randomized):
+                item_data.classification = ItemClassification.useful
+            elif item_name == "Mountain Floor 2 Elevator Control (Panel)" and not discards_shuffled and doors_setting == "mixed" and mountain_upper_excluded:
+                item_data.classification = ItemClassification.useful
+            elif item_name == "Jungle Popup Wall (Panel)" and not symbols_shuffled and disable_non_randomized:
                 item_data.classification = ItemClassification.useful
 
         # Build the mandatory item list.
