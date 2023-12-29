@@ -120,6 +120,7 @@ class WitnessPlayerItems:
         vaults_shuffled = self._world.options.shuffle_vault_boxes
         symbols_shuffled = self._world.options.shuffle_symbols
         doors_setting = self._world.options.shuffle_doors
+        disable_non_randomized = self._world.options.disable_non_randomized_puzzles
         postgame = self._world.options.shuffle_postgame
         goal = self._world.options.victory_condition
         shortbox_req = self._world.options.mountain_lasers
