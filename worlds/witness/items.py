@@ -122,10 +122,10 @@ class WitnessPlayerItems:
         doors_setting = self._world.options.shuffle_doors
         postgame = self._world.options.shuffle_postgame
         goal = self._world.options.victory_condition
-        shortbox = self._world.options.mountain_lasers
-        longbox = self._world.options.challenge_lasers
+        shortbox_req = self._world.options.mountain_lasers
+        longbox_req = self._world.options.challenge_lasers
         mountain_upper_excluded = not postgame and (goal == "mountain_box_short" or goal == "mountain_box_long" and \
-            longbox <= shortbox)
+            longbox_req <= shortbox_req)
 
         for item_name, item_data in self.item_data.items():
             if not eps_shuffled and item_name in {"Monastery Garden Entry (Door)",
@@ -134,7 +134,7 @@ class WitnessPlayerItems:
                                                   "Windmill Turn Control (Panel)"}:
                 # Downgrade doors that only gate progress in EP shuffle.
                 item_data.classification = ItemClassification.useful
-            elif not come_to_you and not eps_shuffled and item_name in {"Quarry Elevator Control (Panel)",
+            elif not (come_to_you or eps_shuffled) and item_name in {"Quarry Elevator Control (Panel)",
                                                                         "Swamp Long Bridge (Panel)"}:
                 # These Bridges/Elevators are not logical access because they may leave you stuck.
                 item_data.classification = ItemClassification.useful
