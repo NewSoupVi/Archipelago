@@ -104,9 +104,11 @@ class WitnessWorld(World):
         if not hasattr(Options, "PerGameCommonOptions"):
             game_options = dict()
 
-            for option_name in (field.name for field in dataclasses.fields(self.options_dataclass)):
+            for option_name, option_type in ((field.name, field.type) for field in dataclasses.fields(self.options_dataclass)):
                 attribute = getattr(self.multiworld, option_name)[self.player]
                 attribute = attribute.value
+                if issubclass(option_type, Toggle):
+                    attribute = bool(attribute)
                 game_options[option_name] = attribute
 
             for option_name in {"local_items", "start_inventory", "start_hints", "start_location_hints",
@@ -232,7 +234,7 @@ class WitnessWorld(World):
             self.multiworld.get_region(region, self.player).add_locations({loc: self.location_name_to_id[loc]})
 
             player = self.multiworld.get_player_name(self.player)
-            
+
             warning(f"""Location "{loc}" had to be added to {player}'s world due to insufficient sphere 1 size.""")
 
     def create_items(self):
