@@ -76,7 +76,7 @@ Town Wooden Roof Lower Row 5
 Town RGB House Entry Panel
 Town Church Entry Panel
 Town Maze Panel
-Town Windmill Entry Panel
+Windmill Entry Panel
 Town Sound Room Right
 Town Red Rooftop 5
 Town Church Lattice
@@ -87,7 +87,7 @@ Theater Exit Left Panel
 Theater Exit Right Panel
 Jungle Laser Shortcut Panel
 Jungle Popup Wall Control
-River Monastery Garden Shortcut Panel
+Jungle Monastery Garden Shortcut Panel
 Bunker Entry Panel
 Bunker Tinted Glass Door Panel
 Bunker Glass Room 3
