@@ -1,5 +1,15 @@
+import dataclasses
 from dataclasses import dataclass
-from Options import Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions
+from types import SimpleNamespace
+
+import Options
+from Options import Toggle, DefaultOnToggle, Range, Choice
+if hasattr(Options, "PerGameCommonOptions"):
+    from Options import PerGameCommonOptions
+else:
+    @dataclass
+    class PerGameCommonOptions:
+        x = ""
 
 
 class DisableNonRandomizedPuzzles(Toggle):
@@ -238,3 +248,10 @@ class TheWitnessOptions(PerGameCommonOptions):
     area_hint_percentage: AreaHintPercentage
     death_link: DeathLink
     death_link_amnesty: DeathLinkAmnesty
+
+
+options_definitions_legacy = dict()
+
+for option_name, option_type in ((attr.name, attr.type) for attr in dataclasses.fields(TheWitnessOptions)
+                                 if attr not in dataclasses.fields(PerGameCommonOptions)):
+    options_definitions_legacy[option_name] = option_type

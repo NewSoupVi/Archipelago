@@ -486,7 +486,8 @@ def get_hintable_areas(world: "WitnessWorld") -> Tuple[Dict[str, List[Location]]
             for region in StaticWitnessLogic.ALL_AREAS_BY_NAME[area]["regions"]
             if region in world.regio.created_regions
         ]
-        locations = [location for region in regions for location in region.get_locations() if location.address]
+
+        locations = [location for region in regions for location in region.locations if location.address]
 
         if locations:
             locations_per_area[area] = locations

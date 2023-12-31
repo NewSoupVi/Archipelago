@@ -518,7 +518,7 @@ class WitnessPlayerLogic:
         self.DOOR_ITEMS_BY_ID: Dict[str, List[str]] = {}
         self.STARTING_INVENTORY = set()
 
-        self.DIFFICULTY = world.options.puzzle_randomization.value
+        self.DIFFICULTY = world.options.puzzle_randomization
 
         if self.DIFFICULTY == 0:
             self.REFERENCE_LOGIC = StaticWitnessLogic.sigma_normal

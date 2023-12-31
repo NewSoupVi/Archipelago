@@ -2,10 +2,11 @@
 Archipelago init file for The Witness
 """
 import dataclasses
+from types import SimpleNamespace
 
 from typing import Dict, Optional, List, Tuple, Set
 from BaseClasses import Region, Location, MultiWorld, Item, Entrance, Tutorial, CollectionState
-from Options import PerGameCommonOptions, Toggle
+from Options import Toggle
 from .presets import witness_option_presets
 from worlds.AutoWorld import World, WebWorld
 from .player_logic import WitnessPlayerLogic
@@ -17,9 +18,16 @@ from .locations import WitnessPlayerLocations, StaticWitnessLocations
 from .items import WitnessItem, StaticWitnessItems, WitnessPlayerItems, ItemData
 from .regions import WitnessRegions
 from .rules import set_rules
-from .options import TheWitnessOptions
+from .options import TheWitnessOptions, options_definitions_legacy
 from .utils import get_audio_logs, build_weighted_int_list
 from logging import warning, error
+import Options
+if hasattr(Options, "PerGameCommonOptions"):
+    from Options import PerGameCommonOptions
+else:
+    @dataclasses.dataclass
+    class PerGameCommonOptions:
+        x = ""
 
 
 class WitnessWebWorld(WebWorld):
@@ -51,6 +59,7 @@ class WitnessWorld(World):
     web = WitnessWebWorld()
 
     options_dataclass = TheWitnessOptions
+    option_definitions = options_definitions_legacy
     options: TheWitnessOptions
 
     item_name_to_id = {
@@ -92,6 +101,21 @@ class WitnessWorld(World):
         }
 
     def generate_early(self):
+        if not hasattr(Options, "PerGameCommonOptions"):
+            game_options = dict()
+
+            for option_name in (field.name for field in dataclasses.fields(self.options_dataclass)):
+                attribute = getattr(self.multiworld, option_name)[self.player]
+                attribute = attribute.value
+                game_options[option_name] = attribute
+
+            for option_name in {"local_items", "start_inventory", "start_hints", "start_location_hints",
+                                "exclude_locations", "priority_locations", "item_links"}:
+                attribute = getattr(self.multiworld, option_name)[self.player]
+                game_options[option_name] = attribute
+
+            self.options = SimpleNamespace(**game_options)
+
         disabled_locations = self.options.exclude_locations.value
 
         self.player_logic = WitnessPlayerLogic(
@@ -276,7 +300,7 @@ class WitnessWorld(World):
                 self.options.local_items.value.add(item_name)
 
     def fill_slot_data(self) -> dict:
-        hint_amount = self.options.hint_amount.value
+        hint_amount = self.options.hint_amount
 
         credits_hint = (
             "This Randomizer is brought to you by",
@@ -361,10 +385,16 @@ class WitnessWorld(World):
 
         slot_data = self._get_slot_data()
 
-        for option_name in (attr.name for attr in dataclasses.fields(TheWitnessOptions)
+        for option_name, option_type in ((attr.name, attr.type) for attr in dataclasses.fields(TheWitnessOptions)
                             if attr not in dataclasses.fields(PerGameCommonOptions)):
             option = getattr(self.options, option_name)
-            slot_data[option_name] = bool(option.value) if isinstance(option, Toggle) else option.value
+
+            if hasattr(option, "value"):
+                option = option.value
+                if issubclass(option_type, Toggle):
+                    option = bool(option)
+
+            slot_data[option_name] = bool(option) if isinstance(option, Toggle) else option
 
         return slot_data
 

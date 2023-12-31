@@ -154,10 +154,10 @@ def _has_item(item: str, world: "WitnessWorld", player: int,
     if item in player_logic.REFERENCE_LOGIC.ALL_REGIONS_BY_NAME:
         return lambda state: state.can_reach(item, "Region", player)
     if item == "7 Lasers":
-        laser_req = world.options.mountain_lasers.value
+        laser_req = world.options.mountain_lasers
         return _has_lasers(laser_req, world)
     if item == "11 Lasers":
-        laser_req = world.options.challenge_lasers.value
+        laser_req = world.options.challenge_lasers
         return _has_lasers(laser_req, world)
     elif item == "PP2 Weirdness":
         return lambda state: _can_do_expert_pp2(state, world)
