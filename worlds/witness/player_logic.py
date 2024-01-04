@@ -340,6 +340,7 @@ class WitnessPlayerLogic:
         lasers = world.options.shuffle_lasers
         victory = world.options.victory_condition
         chal_lasers = world.options.challenge_lasers
+        mnt_lasers = world.options.mountain_lasers
 
         # Exclude panels from the post-game if shuffle_postgame is false.
         if not world.options.shuffle_postgame:
