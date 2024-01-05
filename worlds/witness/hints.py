@@ -221,8 +221,13 @@ def get_always_hint_locations(world: "WitnessWorld") -> List[str]:
         "Mountainside Cloud Cycle EP",
     ]
 
+    # Add Obelisk Sides that contain EPs that are meant to be hinted, if they are necessary to complete the Obelisk Side
     if world.options.EP_difficulty == "eclipse":
-        always.append("Town Obelisk Side 6")
+        always.append("Town Obelisk Side 6")  # Eclipse EP
+
+    if world.options.EP_difficulty != "normal":
+        always.append("Treehouse Obelisk Side 4")  # Couch EP
+        always.append("River Obelisk Side 1")  # Cloud Cycle EP. Needs to be changed to "Mountainside Obelisk" soon
 
     return always
 
@@ -278,10 +283,10 @@ def get_priority_hint_items(world: "WitnessWorld") -> List[str]:
     return sorted(priority)
 
 
-def get_priority_hint_locations(_: "WitnessWorld") -> List[str]:
-    return [
+def get_priority_hint_locations(world: "WitnessWorld") -> List[str]:
+    priority = [
         "Tutorial Patio Floor",
-        "Tutorial Patio Flowers EP",
+        "Tutorial Patio Flowers EP",  # Gonna leave the obelisk side out for now on dev bc I'm too lazy to do it twice
         "Swamp Purple Underwater",
         "Shipwreck Vault Box",
         "Town RGB Room Left",
@@ -296,6 +301,13 @@ def get_priority_hint_locations(_: "WitnessWorld") -> List[str]:
         "Boat Shipwreck Green EP",
         "Quarry Stoneworks Control Room Left",
     ]
+    
+    # Add Obelisk Sides that contain EPs that are meant to be hinted, if they are necessary to complete the Obelisk Side
+    if world.options.EP_difficulty != "normal":
+        priority.append("Town Obelisk Side 6")  # Theater Flowers EP
+        priority.append("Treehouse Obelisk Side 4")  # Shipwreck Green EP
+
+    return priority
 
 
 def word_direct_hint(world: "WitnessWorld", hint: WitnessLocationHint):
