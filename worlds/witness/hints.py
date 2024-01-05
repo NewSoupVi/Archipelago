@@ -212,14 +212,19 @@ def get_always_hint_items(world: "WitnessWorld") -> List[str]:
     return always
 
 
-def get_always_hint_locations(_: "WitnessWorld") -> List[str]:
-    return [
+def get_always_hint_locations(world: "WitnessWorld") -> List[str]:
+    always = [
         "Challenge Vault Box",
         "Mountain Bottom Floor Discard",
         "Theater Eclipse EP",
         "Shipwreck Couch EP",
         "Mountainside Cloud Cycle EP",
     ]
+
+    if world.options.EP_difficulty == "eclipse":
+        always.append("Town Obelisk Side 6")
+
+    return always
 
 
 def get_priority_hint_items(world: "WitnessWorld") -> List[str]:
