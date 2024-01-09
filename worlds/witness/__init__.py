@@ -142,6 +142,12 @@ class WitnessWorld(World):
 
         self.items_placed_early.append("Puzzle Skip")
 
+        # Do warps
+        self.regio.do_warps(self, self.player_logic)
+
+        # Get rid of unreachable regions
+        self.regio.reduce_regions(self)
+
         # Pick an early item to place on the tutorial gate.
         early_items = [item for item in self.items.get_early_items() if item in self.items.get_mandatory_items()]
         if early_items:

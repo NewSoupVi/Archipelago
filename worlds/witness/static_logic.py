@@ -10,17 +10,19 @@ class ItemCategory(Enum):
     SYMBOL = 0
     DOOR = 1
     LASER = 2
-    USEFUL = 3
-    FILLER = 4
-    TRAP = 5
-    JOKE = 6
-    EVENT = 7
+    WARP = 3
+    USEFUL = 4
+    FILLER = 5
+    TRAP = 6
+    JOKE = 7
+    EVENT = 8
 
 
 CATEGORY_NAME_MAPPINGS: Dict[str, ItemCategory] = {
     "Symbols:": ItemCategory.SYMBOL,
     "Doors:": ItemCategory.DOOR,
     "Lasers:": ItemCategory.LASER,
+    "Warps:": ItemCategory.WARP,
     "Useful:": ItemCategory.USEFUL,
     "Filler:": ItemCategory.FILLER,
     "Traps:": ItemCategory.TRAP,
@@ -42,6 +44,11 @@ class ProgressiveItemDefinition(ItemDefinition):
 @dataclass(frozen=True)
 class DoorItemDefinition(ItemDefinition):
     panel_id_hexes: List[str]
+
+
+@dataclass(frozen=True)
+class WarpItemDefinition(ItemDefinition):
+    region_name: str
 
 
 @dataclass(frozen=True)
@@ -219,6 +226,15 @@ class StaticWitnessLogic:
 
     ENTITY_ID_TO_NAME = dict()
 
+
+    @staticmethod
+    def create_warp_items():
+        for region in StaticWitnessLogic.ALL_REGIONS_BY_NAME.values():
+            if region["id"] is not None:
+                new_warp = WarpItemDefinition(region["id"], ItemCategory.WARP, region["name"])
+                StaticWitnessLogic.all_items[region["name"] + " Warp"] = new_warp
+
+
     @staticmethod
     def parse_items():
         """
@@ -261,6 +277,8 @@ class StaticWitnessLogic:
             else:
                 StaticWitnessLogic.all_items[item_name] = ItemDefinition(item_code, current_category)
 
+        StaticWitnessLogic.create_warp_items()
+
     @staticmethod
     def get_parent_progressive_item(item_name: str):
         """
@@ -281,11 +299,11 @@ class StaticWitnessLogic:
         return StaticWitnessLogicObj(get_vanilla_logic())
 
     def __init__(self):
-        self.parse_items()
-
         self.ALL_REGIONS_BY_NAME.update(self.sigma_normal.ALL_REGIONS_BY_NAME)
         self.ALL_AREAS_BY_NAME.update(self.sigma_normal.ALL_AREAS_BY_NAME)
         self.STATIC_CONNECTIONS_BY_REGION_NAME.update(self.sigma_normal.STATIC_CONNECTIONS_BY_REGION_NAME)
+
+        self.parse_items()
 
         self.ENTITIES_BY_HEX.update(self.sigma_normal.ENTITIES_BY_HEX)
         self.ENTITIES_BY_NAME.update(self.sigma_normal.ENTITIES_BY_NAME)

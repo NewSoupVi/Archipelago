@@ -148,6 +148,14 @@ class ChallengeLasers(Range):
     default = 11
 
 
+class Warps(Choice):
+    display_name = "Warps"
+    option_off = 0
+    option_entry_only = 1
+    option_some = 2
+    option_many = 3
+
+
 class ElevatorsComeToYou(Toggle):
     """If true, the Quarry Elevator, Bunker Elevator and Swamp Long Bridge will "come to you" if you approach them.
     This does actually affect logic as it allows unintended backwards / early access into these areas."""
@@ -216,6 +224,7 @@ class TheWitnessOptions(PerGameCommonOptions):
     mountain_lasers: MountainLasers
     challenge_lasers: ChallengeLasers
     early_caves: EarlyCaves
+    warps: Warps
     elevators_come_to_you: ElevatorsComeToYou
     trap_percentage: TrapPercentage
     puzzle_skip_amount: PuzzleSkipAmount

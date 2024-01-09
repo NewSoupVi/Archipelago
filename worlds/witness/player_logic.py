@@ -311,6 +311,19 @@ class WitnessPlayerLogic:
             if not victory == 1:
                 adjustment_linesets_in_order.append(get_challenge_vault_box_exclusion_list())
 
+        # Warps
+
+        if world.options.warps:
+            self.WARP_ITEMS = ["Tutorial First Hallway"]
+            adjustment_linesets_in_order.append(["Starting Inventory:", "Tutorial First Hallway Warp"])
+        if world.options.warps > 1:
+            self.WARP_ITEMS += ["Desert Outside", "Outside Keep", "Mountaintop", "Town", "Caves", "Quarry"]
+        if world.options.warps > 2:
+            self.WARP_ITEMS += ["Outside Symmetry Island", "Outside Bunker", "Jungle", "Outside Swamp"]
+
+        adjustment_linesets_in_order.append(["Items:"] + [name + " Warp" for name in self.WARP_ITEMS])
+        self.PROG_ITEMS_ACTUALLY_IN_THE_GAME.update([name + " Warp" for name in self.WARP_ITEMS])
+
         # Victory Condition
 
         if victory == 0:
@@ -514,6 +527,8 @@ class WitnessPlayerLogic:
         self.PROG_ITEMS_ACTUALLY_IN_THE_GAME = set()
         self.DOOR_ITEMS_BY_ID: Dict[str, List[str]] = {}
         self.STARTING_INVENTORY = set()
+
+        self.WARP_ITEMS: List[str] = list()
 
         self.DIFFICULTY = world.options.puzzle_randomization.value
 

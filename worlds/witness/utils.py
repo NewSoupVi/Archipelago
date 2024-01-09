@@ -4,6 +4,8 @@ from typing import List, Collection, FrozenSet, Tuple, Dict, Any, Set
 from pkgutil import get_data
 from random import random
 
+WARP_OFFSET = 750
+
 
 def weighted_sample(world_random: random, population: List, weights: List[float], k: int):
     positions = range(len(population))
@@ -53,10 +55,18 @@ def define_new_region(region_string: str) -> Tuple[Dict[str, Any], Set[Tuple[str
     Returns a region object by parsing a line in the logic file
     """
 
-    region_string = region_string[:-1]
-    line_split = region_string.split(" - ")
+    line_split = region_string.replace("]","[").split("[")
+    id_string = line_split[1]
 
-    region_name_full = line_split.pop(0)
+    if id_string == "None":
+        id_int = None
+    else:
+        id_int = WARP_OFFSET + int(id_string)
+
+    region_string = line_split[2][1:-1]
+    region_string_split = region_string.split(" - ")
+
+    region_name_full = region_string_split.pop(0)
 
     region_name_split = region_name_full.split(" (")
 
@@ -65,9 +75,9 @@ def define_new_region(region_string: str) -> Tuple[Dict[str, Any], Set[Tuple[str
 
     options = set()
 
-    for _ in range(len(line_split) // 2):
-        connected_region = line_split.pop(0)
-        corresponding_lambda = line_split.pop(0)
+    for _ in range(len(region_string_split) // 2):
+        connected_region = region_string_split.pop(0)
+        corresponding_lambda = region_string_split.pop(0)
 
         options.add(
             (connected_region, parse_lambda(corresponding_lambda))
@@ -76,7 +86,8 @@ def define_new_region(region_string: str) -> Tuple[Dict[str, Any], Set[Tuple[str
     region_obj = {
         "name": region_name,
         "shortName": region_name_simple,
-        "panels": list()
+        "panels": list(),
+        "id": id_int
     }
     return region_obj, options
 

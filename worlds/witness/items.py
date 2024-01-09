@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 NUM_ENERGY_UPGRADES = 4
 
 
-@dataclass()
+@dataclass
 class ItemData:
     """
     ItemData for an item in The Witness
@@ -63,6 +63,9 @@ class StaticWitnessItems:
             elif definition.category is ItemCategory.LASER:
                 classification = ItemClassification.progression_skip_balancing
                 StaticWitnessItems.item_groups.setdefault("Lasers", []).append(item_name)
+            elif definition.category is ItemCategory.WARP:
+                classification = ItemClassification.progression
+                StaticWitnessItems.item_groups.setdefault("Warps", []).append(item_name)
             elif definition.category is ItemCategory.USEFUL:
                 classification = ItemClassification.useful
             elif definition.category is ItemCategory.FILLER:

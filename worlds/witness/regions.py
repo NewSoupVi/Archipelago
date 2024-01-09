@@ -112,13 +112,24 @@ class WitnessRegions:
                 self.connect_if_possible(world, region_name, connection[0], connection[1], regions_by_name)
                 self.connect_if_possible(world, connection[0], region_name, connection[1], regions_by_name, True)
 
+        self.created_regions = regions_by_name
+
+    def do_warps(self, world: "WitnessWorld", player_logic: WitnessPlayerLogic):
+        source = self.created_regions["Entry"]
+
+        for warp in player_logic.WARP_ITEMS:
+            target = self.created_regions[warp]
+            warp_name = warp + " Warp"
+            source.connect(target, warp_name, lambda state, w=warp_name: state.has(w, world.player))
+
+    def reduce_regions(self, world: "WitnessWorld"):
         # find regions that are completely disconnected from the start node and remove them
         regions_to_check = {"Menu"}
         reachable_regions = {"Menu"}
 
         while regions_to_check:
             next_region = regions_to_check.pop()
-            region_obj = regions_by_name[next_region]
+            region_obj = self.created_regions[next_region]
 
             for exit in region_obj.exits:
                 target = exit.connected_region
@@ -129,7 +140,7 @@ class WitnessRegions:
                 regions_to_check.add(target.name)
                 reachable_regions.add(target.name)
 
-        self.created_regions = {k: v for k, v in regions_by_name.items() if k in reachable_regions}
+        self.created_regions = {k: v for k, v in self.created_regions.items() if k in reachable_regions}
 
         world.multiworld.regions += self.created_regions.values()
 
