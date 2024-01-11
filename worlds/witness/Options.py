@@ -154,6 +154,37 @@ class ElevatorsComeToYou(Toggle):
     display_name = "All Bridges & Elevators come to you"
 
 
+class Warps(Choice):
+    """Adds warps to the game.
+    "Entry Warp Only" means you will have a warp back to your Entry Location. Every warps setting except "off" has this.
+    "Some" will add 8-9 warps to the game (depending on "Warp types" setting)
+    "Many" will add 12-13 warps to the game (depending on "Warp types" setting)"""
+    display_name = "Warps"
+    option_off = 0
+    option_entry_warp_only = 1
+    option_some = 2
+    option_many = 3
+    default = 2
+
+
+class WarpTypes(Choice):
+    """Determines what kind of warps you will get.
+    "Default" is a curated set of mostly travel-time-reducing warps, with some access-granting warps.
+    "Access granting" is a curated set that focuses on granting access to areas you'd otherwise need items to access.
+    "Random Warps" will generate warps to random regions."""
+    display_name = "Warp Types"
+    option_default = 0
+    option_access_granting = 1
+    option_random_warps = 2
+    default = 0
+
+
+class AllowWarpsToPostgame(DefaultOnToggle):
+    """If set to True, warps may lead to post-game areas and bring them into logic,
+    even with shuffle_postgame: False."""
+    display_name = "Allow warps to postgame"
+
+
 class TrapPercentage(Range):
     """Replaces junk items with traps, at the specified rate."""
     display_name = "Trap Percentage"
@@ -205,6 +236,9 @@ class TheWitnessOptions(PerGameCommonOptions):
     challenge_lasers: ChallengeLasers
     early_caves: EarlyCaves
     elevators_come_to_you: ElevatorsComeToYou
+    warps: Warps
+    warp_types: WarpTypes
+    allow_warps_to_postgame: AllowWarpsToPostgame
     trap_percentage: TrapPercentage
     puzzle_skip_amount: PuzzleSkipAmount
     hint_amount: HintAmount

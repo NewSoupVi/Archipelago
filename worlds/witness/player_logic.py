@@ -22,6 +22,7 @@ from logging import warning
 
 from .static_logic import StaticWitnessLogic, DoorItemDefinition, ItemCategory, ProgressiveItemDefinition
 from .utils import *
+from .warps import some_default_warps
 
 if TYPE_CHECKING:
     from . import WitnessWorld
@@ -249,10 +250,14 @@ class WitnessPlayerLogic:
 
                     if panel_set_string == "TrueOneWay":
                         self.CONNECTIONS_BY_REGION_NAME_THEORETICAL[source_region].add(
-                            (target_region, frozenset({frozenset(["TrueOneWay"])}))
+                            (target_region, frozenset({frozenset([panel_set_string])}))
                         )
                     else:
-                        new_lambda = connection[1] | parse_lambda(panel_set_string)
+                        if panel_set_string.endswith("Warp"):
+                            new_lambda = connection[1] | frozenset({frozenset([panel_set_string])})
+                        else:
+                            new_lambda = connection[1] | parse_lambda(panel_set_string)
+                        new_lambda = dnf_remove_redundancies(new_lambda)
                         self.CONNECTIONS_BY_REGION_NAME_THEORETICAL[source_region].add((target_region, new_lambda))
                     break
             else:
@@ -264,8 +269,20 @@ class WitnessPlayerLogic:
                 line = self.REFERENCE_LOGIC.ENTITIES_BY_HEX[line]["checkName"]
             self.ADDED_CHECKS.add(line)
 
-    @staticmethod
-    def handle_postgame(world: "WitnessWorld"):
+    def make_several_adjustments(self, adjustments: List[str]):
+        current_adjustment_type = None
+
+        for line in adjustments:
+            if len(line) == 0:
+                continue
+
+            if line[-1] == ":":
+                current_adjustment_type = line[:-1]
+                continue
+
+            self.make_single_adjustment(current_adjustment_type, line)
+
+    def handle_postgame(self, world: "WitnessWorld"):
         """
             In shuffle_postgame, panels that become accessible "after or at the same time as the goal" are disabled.
             This mostly involves the disabling of key panels (e.g. long box when the goal is short box).
@@ -332,7 +349,8 @@ class WitnessPlayerLogic:
         if not (early_caves or remote_doors) and victory == "challenge":
             postgame_adjustments.append(get_caves_except_path_to_challenge_exclusion_list())
 
-        return postgame_adjustments
+        for adjustment_lineset in postgame_adjustments:
+            self.make_several_adjustments(adjustment_lineset)
 
     def make_options_adjustments(self, world: "WitnessWorld"):
         """Makes logic adjustments based on options"""
@@ -345,10 +363,6 @@ class WitnessPlayerLogic:
         victory = world.options.victory_condition
         mnt_lasers = world.options.mountain_lasers
         chal_lasers = world.options.challenge_lasers
-
-        # Exclude panels from the post-game if shuffle_postgame is false.
-        if not world.options.shuffle_postgame:
-            adjustment_linesets_in_order += self.handle_postgame(world)
 
         # Exclude Discards / Vaults
         if not world.options.shuffle_discarded_panels:
@@ -457,17 +471,7 @@ class WitnessPlayerLogic:
                 self.EXCLUDED_LOCATIONS.add(loc_obj["entity_hex"])
 
         for adjustment_lineset in adjustment_linesets_in_order:
-            current_adjustment_type = None
-
-            for line in adjustment_lineset:
-                if len(line) == 0:
-                    continue
-
-                if line[-1] == ":":
-                    current_adjustment_type = line[:-1]
-                    continue
-
-                self.make_single_adjustment(current_adjustment_type, line)
+            self.make_several_adjustments(adjustment_lineset)
 
         for entity_id in self.COMPLETELY_DISABLED_ENTITIES:
             if entity_id in self.DOOR_ITEMS_BY_ID:
@@ -697,6 +701,29 @@ class WitnessPlayerLogic:
             item_name for item_name, is_required in is_item_required_dict.items() if not is_required
         }
 
+    def add_warps(self, world: "WitnessWorld"):
+        if not world.options.warps:
+            return
+
+        if world.options.warps == "entry_warp_only":
+            self.WARPS = ["First Hallway"]
+            return
+
+        if world.options.warp_types == "default":
+            if world.options.warps == "some":
+                self.WARPS = [warp for warp in some_default_warps if warp not in self.UNREACHABLE_REGIONS]
+
+            else:
+                assert False
+        else:
+            assert False
+
+        warps_adjustments = ["New Connections:"]
+        for warp in self.WARPS:
+            warps_adjustments.append(f"Entry - {warp} - {warp} Warp")
+
+        self.make_several_adjustments(warps_adjustments)
+
     def finalize_items(self):
         """
         Finalise which items are used in the world, and handle their progressive versions.
@@ -787,6 +814,8 @@ class WitnessPlayerLogic:
         self.ADDED_CHECKS = set()
         self.VICTORY_LOCATION = "0x0356B"
 
+        self.WARPS = list()
+
         self.ALWAYS_EVENT_NAMES_BY_HEX = {
             "0x00509": "+1 Laser (Symmetry Laser)",
             "0x012FB": "+1 Laser (Desert Laser)",
@@ -812,6 +841,19 @@ class WitnessPlayerLogic:
         self.make_options_adjustments(world)
         self.determine_unrequired_entities(world)
         self.find_unsolvable_entities(world)
+
+        # If warps are allowed to go into the postgame, add them early
+        if world.options.allow_warps_to_postgame:
+            self.add_warps(world)
+
+        # Exclude panels from the post-game if shuffle_postgame is false.
+        if not world.options.shuffle_postgame:
+            self.handle_postgame(world)
+            self.find_unsolvable_entities(world)
+
+        # If warps are not allowed to go into the postgame, add them after postgame regions have been determined
+        if not world.options.allow_warps_to_postgame:
+            self.add_warps(world)
 
         # After we have adjusted the raw requirements, we perform a dependency reduction for the entity requirements.
         # This will make the access conditions way faster, instead of recursively checking dependent entities each time.
