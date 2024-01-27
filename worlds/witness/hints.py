@@ -634,7 +634,7 @@ def create_all_hints(world: "WitnessWorld", hint_amount: int, area_hints: int) -
         if loc.address and StaticWitnessLogic.ENTITIES_BY_NAME[loc.name]["area"]["name"] == "Tutorial (Inside)"
     }
 
-    intended_location_hints = area_hints - hint_amount
+    intended_location_hints = hint_amount - area_hints
 
     # First, make always and priority hints.
 
@@ -662,9 +662,6 @@ def create_all_hints(world: "WitnessWorld", hint_amount: int, area_hints: int) -
         generated_hints.append(word_direct_hint(world, location_hint))
         already_hinted_locations.add(location_hint.location)
 
-    amt_of_used_always_hints = len(always_hints) - always_hints_to_use
-    amt_of_used_priority_hints = len(priority_hints) - priority_hints_to_use
-
     location_hints_created_in_round_1 = len(generated_hints)
 
     unhinted_locations_per_area: Dict[str, Set[Location]] = dict()
@@ -677,6 +674,10 @@ def create_all_hints(world: "WitnessWorld", hint_amount: int, area_hints: int) -
     # If we don't have enough hints yet, recalculate always and priority hints, then fill with random hints
     if len(generated_hints) < hint_amount:
         remaining_needed_location_hints = hint_amount - len(generated_hints)
+
+        # Save old values for used always and priority hints for later calculations
+        amt_of_used_always_hints = always_hints_to_use
+        amt_of_used_priority_hints = priority_hints_to_use
 
         # Recalculate how many always hints and priority hints are supposed to be used
         intended_location_hints = remaining_needed_location_hints + location_hints_created_in_round_1
