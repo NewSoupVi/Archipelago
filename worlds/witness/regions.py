@@ -116,7 +116,8 @@ class WitnessRegions:
             for connection in player_logic.CONNECTIONS_BY_REGION_NAME[region_name]:
                 self.connect_if_possible(world, region_name, connection[0], connection[1], regions_by_name)
 
-        world.multiworld.regions += list(regions_by_name.values())
+        self.created_regions = {k: v for k, v in regions_by_name.items()}
+        world.multiworld.regions += self.created_regions
 
     def __init__(self, locat: WitnessPlayerLocations, world: "WitnessWorld"):
         difficulty = world.options.puzzle_randomization
