@@ -108,12 +108,7 @@ class WitnessPlayerLogic:
             for option_entity in option:
                 dep_obj = self.REFERENCE_LOGIC.ENTITIES_BY_HEX.get(option_entity)
 
-                if option_entity in self.ALWAYS_EVENT_NAMES_BY_HEX:
-                    new_items = frozenset({frozenset([option_entity])})
-                elif (panel_hex, option_entity) in self.CONDITIONAL_EVENTS:
-                    new_items = frozenset({frozenset([option_entity])})
-                    self.USED_EVENT_NAMES_BY_HEX[option_entity] = self.CONDITIONAL_EVENTS[(panel_hex, option_entity)]
-                elif option_entity in {"7 Lasers", "11 Lasers", "7 Lasers + Redirect", "11 Lasers + Redirect",
+                if option_entity in {"7 Lasers", "11 Lasers", "7 Lasers + Redirect", "11 Lasers + Redirect",
                                        "PP2 Weirdness", "Theater to Tunnels"}:
                     new_items = frozenset({frozenset([option_entity])})
                 else:
