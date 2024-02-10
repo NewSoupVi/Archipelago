@@ -671,14 +671,14 @@ Door - 0x3873B (Laser Shortcut) - 0x337FA
 159350 - 0x035CB (Bamboo CCW EP) - True - True
 159351 - 0x035CF (Bamboo CW EP) - True - True
 
-Outside Jungle River (Jungle) - Main Island - True - Monastery Garden - 0x0CF2A - River Vault - 0x15287:
+Outside Jungle River (Jungle) - Main Island - True - Monastery Garden - 0x0CF2A - Jungle Vault - 0x15287:
 158267 - 0x17CAA (Monastery Garden Shortcut Panel) - True - True
 Door - 0x0CF2A (Monastery Garden Shortcut) - 0x17CAA
 158663 - 0x15ADD (Vault Panel) - True - Black/White Squares & Dots
 Door - 0x15287 (Vault Door) - 0x15ADD
 159110 - 0x03AC5 (Green Leaf Moss EP) - True - True
 
-River Vault (Jungle):
+Jungle Vault (Jungle):
 158664 - 0x03702 (Vault Box) - True - True
 
 ==Bunker==
@@ -716,8 +716,10 @@ Door - 0x0A08D (Elevator Room Entry) - 0x17E67
 Bunker Elevator Section (Bunker) - Bunker Elevator - TrueOneWay:
 159311 - 0x035F5 (Tinted Door EP) - 0x17C79 - True
 
-Bunker Elevator (Bunker) - Bunker Elevator Section - 0x0A079 - Bunker Green Room - 0x0A079 - Bunker Laser Platform - 0x0A079 - Outside Bunker - 0x0A079:
+Bunker Elevator (Bunker) - Bunker Elevator Section - 0x0A079 - Bunker Cyan Room - 0x0A079 - Bunker Green Room - 0x0A079 - Bunker Laser Platform - 0x0A079 - Outside Bunker - 0x0A079:
 158286 - 0x0A079 (Elevator Control) - True - Colored Squares & Black/White Squares
+
+Bunker Cyan Room (Bunker) - Bunker Elevator - TrueOneWay:
 
 Bunker Green Room (Bunker) - Bunker Elevator - TrueOneWay:
 159310 - 0x000D3 (Green Room Flowers EP) - True - True
@@ -858,13 +860,13 @@ Treehouse Beach (Treehouse Beach) - Main Island - True:
 159201 - 0x0053E (Sand Shadow EP) - True - True
 159212 - 0x220BD (Both Orange Bridges EP) - 0x17DA2 & 0x17DDB - True
 
-Treehouse Entry Area (Treehouse) - Treehouse Between Doors - 0x0C309 - The Ocean - 0x17C95:
+Treehouse Entry Area (Treehouse) - Treehouse Between Entry Doors - 0x0C309 - The Ocean - 0x17C95:
 158343 - 0x17C95 (Boat Spawn) - True - Boat
 158344 - 0x0288C (First Door Panel) - True - Stars & Stars + Same Colored Symbol & Triangles
 Door - 0x0C309 (First Door) - 0x0288C
 159210 - 0x33721 (Buoy EP) - 0x17C95 - True
 
-Treehouse Between Doors (Treehouse) - Treehouse Yellow Bridge - 0x0C310:
+Treehouse Between Entry Doors (Treehouse) - Treehouse Yellow Bridge - 0x0C310:
 158345 - 0x02886 (Second Door Panel) - True - Stars & Stars + Same Colored Symbol & Triangles
 Door - 0x0C310 (Second Door) - 0x02886
 
@@ -893,7 +895,7 @@ Treehouse First Purple Bridge (Treehouse) - Treehouse Second Purple Bridge - 0x1
 158360 - 0x17D2D (First Purple Bridge 4) - 0x17CE4 - Stars & Dots & Full Dots
 158361 - 0x17D6C (First Purple Bridge 5) - 0x17D2D - Stars & Dots & Full Dots
 
-Treehouse Right Orange Bridge (Treehouse) - Treehouse Bridge Platform - 0x17DA2:
+Treehouse Right Orange Bridge (Treehouse) - Treehouse Drawbridge Platform - 0x17DA2:
 158391 - 0x17D88 (Right Orange Bridge 1) - True - Stars & Stars + Same Colored Symbol & Triangles
 158392 - 0x17DB4 (Right Orange Bridge 2) - 0x17D88 - Stars & Stars + Same Colored Symbol & Triangles
 158393 - 0x17D8C (Right Orange Bridge 3) - 0x17DB4 - Stars & Stars + Same Colored Symbol & Triangles
@@ -907,7 +909,7 @@ Treehouse Right Orange Bridge (Treehouse) - Treehouse Bridge Platform - 0x17DA2:
 158401 - 0x17DB1 (Right Orange Bridge 11) - 0x17DB7 - Stars & Stars + Same Colored Symbol & Triangles
 158402 - 0x17DA2 (Right Orange Bridge 12) - 0x17DB1 - Stars & Stars + Same Colored Symbol & Triangles
 
-Treehouse Bridge Platform (Treehouse) - Main Island - 0x0C32D:
+Treehouse Drawbridge Platform (Treehouse) - Main Island - 0x0C32D:
 158404 - 0x037FF (Drawbridge Panel) - True - Stars
 Door - 0x0C32D (Drawbridge) - 0x037FF
 
@@ -1026,15 +1028,13 @@ Mountain Floor 1 Bridge (Mountain Floor 1) - Mountain Floor 1 At Door - TrueOneW
 Mountain Floor 1 At Door (Mountain Floor 1) - Mountain Floor 2 - 0x09E54:
 Door - 0x09E54 (Exit) - 0x09EAF & 0x09F6E & 0x09E6B & 0x09E7B
 
-Mountain Floor 2 (Mountain Floor 2) - Mountain Floor 2 Light Bridge Room Near - 0x09FFB - Mountain Floor 2 Blue Bridge - 0x09E86 - Mountain Pink Bridge EP - TrueOneWay:
+Mountain Floor 2 (Mountain Floor 2) - Mountain Floor 2 Light Bridge Room Near - 0x09FFB - Mountain Floor 2 Beyond Bridge - 0x09E86 - Mountain Floor 2 At Door - 0x09ED8 & 0x09E86 - Mountain Pink Bridge EP - TrueOneWay:
 158426 - 0x09FD3 (Near Row 1) - True - Stars & Colored Squares & Stars + Same Colored Symbol
 158427 - 0x09FD4 (Near Row 2) - 0x09FD3 - Stars & Triangles & Stars + Same Colored Symbol
 158428 - 0x09FD6 (Near Row 3) - 0x09FD4 - Stars & Shapers & Negative Shapers & Stars + Same Colored Symbol
 158429 - 0x09FD7 (Near Row 4) - 0x09FD6 - Stars
 158430 - 0x09FD8 (Near Row 5) - 0x09FD7 - Stars & Stars + Same Colored Symbol & Rotated Shapers & Eraser
 Door - 0x09FFB (Staircase Near) - 0x09FD8
-
-Mountain Floor 2 Blue Bridge (Mountain Floor 2) - Mountain Floor 2 Beyond Bridge - TrueOneWay - Mountain Floor 2 At Door - 0x09ED8:
 
 Mountain Floor 2 At Door (Mountain Floor 2) - Mountain Floor 2 Elevator Room - 0x09EDD:
 Door - 0x09EDD (Elevator Room Entry) - 0x09ED8 & 0x09E86
