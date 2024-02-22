@@ -94,15 +94,6 @@ class WitnessPlayerLogic:
             else:
                 these_items = all_options
 
-        disabled_eps = {eHex for eHex in self.COMPLETELY_DISABLED_ENTITIES
-                        if self.REFERENCE_LOGIC.ENTITIES_BY_HEX[eHex]["entityType"] == "EP"}
-
-        these_panels = frozenset({panels - disabled_eps
-                                  for panels in these_panels})
-
-        if these_panels == frozenset({frozenset()}):
-            return these_items
-
         all_options = set()
 
         for option in these_panels:
@@ -118,6 +109,11 @@ class WitnessPlayerLogic:
                     theoretical_new_items = self.reduce_req_within_region(option_entity, allow_victory)
 
                     if not theoretical_new_items:
+                        # If the dependent entity is unsolvable & it is an EP, the current entity is an Obelisk Side.
+                        # In this case, we actually have to skip it because it will just become pre-solved instead.
+                        if dep_obj["entityType"] == "EP":
+                            continue
+                        # If the dependent entity is unsolvable and is NOT an EP, this requirement option is invalid.
                         new_items = frozenset()
                     elif option_entity in self.ALWAYS_EVENT_NAMES_BY_HEX:
                         new_items = frozenset({frozenset([option_entity])})
