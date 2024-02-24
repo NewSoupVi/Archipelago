@@ -14,6 +14,7 @@ witness_option_presets: Dict[str, Dict[str, Any]] = {
         "door_groupings": DoorGroupings.option_off,
         "shuffle_boat": True,
         "shuffle_lasers": ShuffleLasers.option_local,
+        "obelisk_keys": ObeliskKeys.option_false,
 
         "disable_non_randomized_puzzles": True,
         "shuffle_discarded_panels": False,
@@ -34,6 +35,7 @@ witness_option_presets: Dict[str, Dict[str, Any]] = {
         "hint_amount": HintAmount.default,
         "area_hint_percentage": AreaHintPercentage.default,
         "death_link": DeathLink.default,
+        "death_link_amnesty": DeathLinkAmnesty.default,
     },
 
     # For relative beginners who want to move to the next step.
@@ -47,6 +49,7 @@ witness_option_presets: Dict[str, Dict[str, Any]] = {
         "door_groupings": DoorGroupings.option_regional,
         "shuffle_boat": True,
         "shuffle_lasers": ShuffleLasers.option_off,
+        "obelisk_keys": ObeliskKeys.option_false,
 
         "disable_non_randomized_puzzles": False,
         "shuffle_discarded_panels": True,
@@ -67,6 +70,7 @@ witness_option_presets: Dict[str, Dict[str, Any]] = {
         "hint_amount": HintAmount.default,
         "area_hint_percentage": AreaHintPercentage.default,
         "death_link": DeathLink.default,
+        "death_link_amnesty": DeathLinkAmnesty.default,
     },
 
     # Allsanity but without the BS (no expert, no tedious EPs).
@@ -80,6 +84,7 @@ witness_option_presets: Dict[str, Dict[str, Any]] = {
         "door_groupings": DoorGroupings.option_off,
         "shuffle_boat": True,
         "shuffle_lasers": ShuffleLasers.option_anywhere,
+        "obelisk_keys": ObeliskKeys.option_true,
 
         "disable_non_randomized_puzzles": False,
         "shuffle_discarded_panels": True,
@@ -100,5 +105,6 @@ witness_option_presets: Dict[str, Dict[str, Any]] = {
         "hint_amount": HintAmount.default,
         "area_hint_percentage": AreaHintPercentage.default,
         "death_link": DeathLink.default,
+        "death_link_amnesty": DeathLinkAmnesty.default,
     },
 }
