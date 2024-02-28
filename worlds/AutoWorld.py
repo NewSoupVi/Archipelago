@@ -152,6 +152,21 @@ def call_all(multiworld: "MultiWorld", method_name: str, *args: Any) -> None:
         prev_item_count = len(multiworld.itempool)
         world_types.add(multiworld.worlds[player].__class__)
         call_single(multiworld, method_name, player, *args)
+        
+        if method_name == "pre_fill" and not multiworld.worlds[player].game == "ArchipelagoVersion":
+            """reg = multiworld.get_region("Menu", player)
+
+            print(reg.locations)
+
+            exits = reg.exits
+
+            for exit in exits:
+                exit.access_rule = create_lambda(exit.access_rule, multiworld.worlds[player].game)"""
+            for location in multiworld.get_locations(player):
+                location.access_rule = create_lambda(location.access_rule, multiworld.worlds[player].game)
+
+            multiworld.completion_condition[player] = create_lambda(multiworld.completion_condition[player], multiworld.worlds[player].game)
+        
         if __debug__:
             new_items = multiworld.itempool[prev_item_count:]
             for i, item in enumerate(new_items):
