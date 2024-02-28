@@ -29,7 +29,7 @@ class ArchipelagoVersionWorld(World):
     location_name_to_id.update(archipelago_version_game_checks)
     location_name_to_id.update(archipelago_game_free_checks)
 
-    def generate_basic(self):
+    def generate_basic(self):   
         if is_option_enabled(self.multiworld, self.player, "VersionMode"):
             for location, item in archipelago_version_game_unlocks.items():
                 self.multiworld.get_location(location, self.player).place_locked_item(self.create_item(item))

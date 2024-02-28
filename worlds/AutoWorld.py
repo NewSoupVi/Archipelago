@@ -146,6 +146,16 @@ def call_single(multiworld: "MultiWorld", method_name: str, player: int, *args: 
         return ret
 
 
+def ap_version_has_item(state, item):
+    if state.has(item, 1):
+        return True
+    return False
+
+
+def create_lambda(og, item):
+    return lambda state: og(state) and ap_version_has_item(state, item)
+
+
 def call_all(multiworld: "MultiWorld", method_name: str, *args: Any) -> None:
     world_types: Set[AutoWorldRegister] = set()
     for player in multiworld.player_ids:
