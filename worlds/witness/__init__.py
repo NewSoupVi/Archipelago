@@ -73,8 +73,6 @@ class WitnessWorld(World):
         self.own_itempool = []
 
     def _get_slot_data(self):
-        print(self.items.get_door_ids_in_pool())
-
         return {
             'seed': self.random.randrange(0, 1000000),
             'victory_location': int(self.player_logic.VICTORY_LOCATION, 16),
