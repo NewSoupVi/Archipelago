@@ -102,7 +102,6 @@ class ArchipelagoLockerWorld(World):
             for location in menu_region.locations:
                 add_rule(location, lambda state, game_name=world.game: state.has(game_name, cls.representative_world))
 
-
     def create_item(self, name: str):
         classif = ItemClassification.progression if name in self.game_item_to_id else ItemClassification.filler
         return ArchipelagoLockerItem(name, classif, self.item_name_to_id[name], self.player)
