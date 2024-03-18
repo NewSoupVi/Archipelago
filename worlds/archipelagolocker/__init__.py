@@ -90,8 +90,17 @@ class ArchipelagoLockerWorld(World):
         for player, world in multiworld.worlds.items():
             if world.game == cls.game:
                 continue
-            for location in multiworld.get_locations(player):
-                add_rule(location, lambda state, game_name=world.game: state.has(game_name, cls.representative_world))
+
+            menu_region = world.get_region("Menu")
+            for menu_exit in menu_region.exits:
+                add_rule(menu_exit, lambda state, game_name=world.game: state.has(game_name, cls.representative_world))
+
+            """
+            if world.game == "A Link to the Past":            
+                for world.game:
+                    add_rule(location, lambda state, game_name=world.game: state.has(game_name, cls.representative_world))
+            """
+
 
     def create_item(self, name: str):
         classif = ItemClassification.progression if name in self.game_item_to_id else ItemClassification.filler
