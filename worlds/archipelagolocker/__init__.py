@@ -26,13 +26,10 @@ class ArchipelagoLockerWorld(World):
     def stage_generate_early(cls, multiworld: MultiWorld):
         from worlds import network_data_package
 
-        world_names = sorted({(world.game, player) for player, world in multiworld.worlds.items()})
+        world_names = sorted({world.game for world in multiworld.worlds.values()})
 
-        for i, (world_name, world_player) in enumerate(world_names):
+        for i, world_name in enumerate(world_names):
             if world_name == cls.game:
-                if cls.representative_world:
-                    raise RuntimeError("There can only be one ArchipelagoLocker world per multiworld.")
-                cls.representative_world = world_player
                 continue
 
             cls.game_location_to_id[world_name + " Free Check"] = 195691000 + i
@@ -40,6 +37,13 @@ class ArchipelagoLockerWorld(World):
 
         cls.location_name_to_id |= cls.game_location_to_id
         cls.item_name_to_id |= cls.game_item_to_id
+
+        for player_no, world in multiworld.worlds.items():
+            if world.game == cls.game:
+                if cls.representative_world:
+                    raise RuntimeError("There can only be one ArchipelagoLocker world per multiworld.")
+                cls.representative_world = player_no
+                continue
 
         network_data_package["games"][cls.game] = cls.get_data_package_data()
 
@@ -94,6 +98,9 @@ class ArchipelagoLockerWorld(World):
             menu_region = world.get_region("Menu")
             for menu_exit in menu_region.exits:
                 add_rule(menu_exit, lambda state, game_name=world.game: state.has(game_name, cls.representative_world))
+
+            for location in menu_region.locations:
+                add_rule(location, lambda state, game_name=world.game: state.has(game_name, cls.representative_world))
 
 
     def create_item(self, name: str):
