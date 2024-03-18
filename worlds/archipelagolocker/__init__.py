@@ -49,7 +49,7 @@ class ArchipelagoLockerWorld(World):
 
     def create_items(self):
         for item_name in self.item_name_to_id:
-            own_itempool.append(self.create_item(item_name))
+            self.multiworld.itempool.append(self.create_item(item_name))
 
     def create_regions(self):
         menu_region = Region("Menu", self.player, self.multiworld)
