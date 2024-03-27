@@ -4,7 +4,7 @@ Archipelago init file for The Witness
 import dataclasses
 import logging
 
-from typing import Dict, Optional, cast
+from typing import Dict, Optional, cast, List
 from BaseClasses import Region, Location, MultiWorld, Item, Entrance, Tutorial, CollectionState
 from Options import PerGameCommonOptions, Toggle
 from .presets import witness_option_presets
@@ -281,28 +281,41 @@ class WitnessWorld(World):
             if self.items.item_data[item_name].local_only:
                 self.options.local_items.value.add(item_name)
 
-    def pre_fill(self) -> None:
+    def fill_hook(self, progitempool: List[Item], _, _2, fill_locations: List[Location]) -> None:
         # Pick an early item to place on the tutorial gate.
         early_items = self.items.get_early_items()
         self.random.shuffle(early_items)
 
+        player_name = self.multiworld.get_player_name(self.player)
+
         for early_item_name in early_items:
             try:
                 early_item_index, early_item = next(
-                    (i, item) for i, item in enumerate(self.multiworld.itempool)
+                    (i, item) for i, item in enumerate(progitempool)
                     if item.name == early_item_name and item.player == self.player
                 )
             except StopIteration:
-                logging.info(f"{early_item_name} could not be placed on Tutorial Gate Open, it was plandoed elsewhere.")
+                logging.info(f"{early_item_name} could not be placed on {player_name}'s Tutorial Gate Open,"
+                             " as all copies of it were plandoed elsewhere.")
                 continue
 
             if self.options.puzzle_randomization == "sigma_expert":
                 # In Expert, only tag the item as early, rather than forcing it onto the gate.
                 self.multiworld.local_early_items[self.player][early_item.name] = 1
             else:
-                self.multiworld.itempool.pop(early_item_index)
-                self.get_location("Tutorial Gate Open").place_locked_item(early_item)
+                tutorial_gate_open = self.get_location("Tutorial Gate Open")
+                if tutorial_gate_open not in fill_locations:
+                    return
+
+                progitempool.pop(early_item_index)
+                tutorial_gate_open.place_locked_item(early_item)
+                fill_locations.remove(tutorial_gate_open)
+
             return
+
+        if not early_items:
+            logging.error(f"No item could be placed on {player_name}'s Tutorial Gate Open,"
+                          f" they were all plandoed elsewhere.")
 
     def fill_slot_data(self) -> dict:
         already_hinted_locations = set()
