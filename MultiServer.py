@@ -1493,25 +1493,19 @@ class ClientMessageProcessor(CommonCommandProcessor):
             if new_hints:
                 found_hints = [hint for hint in new_hints if hint.found]
                 not_found_hints = [hint for hint in new_hints if not hint.found]
-
-                if not not_found_hints:  # everything's been found, no need to pay
-                    can_pay = 1000
-                elif cost:
-                    can_pay = int((points_available // cost) > 0)  # limit to 1 new hint per call
-                else:
-                    can_pay = 1000
+                can_pay_once = bool(cost and not_found_hints and points_available // cost)                
 
                 self.ctx.random.shuffle(not_found_hints)
                 # By popular vote, make hints prefer non-local placements
                 not_found_hints.sort(key=lambda hint: int(hint.receiving_player != hint.finding_player))
 
                 hints = found_hints
-                while can_pay > 0:
+                while not cost or can_pay_once:
                     if not not_found_hints:
                         break
                     hint = not_found_hints.pop()
                     hints.append(hint)
-                    can_pay -= 1
+                    can_pay_once = False
                     self.ctx.hints_used[self.client.team, self.client.slot] += 1
                     points_available = get_client_points(self.ctx, self.client)
 
