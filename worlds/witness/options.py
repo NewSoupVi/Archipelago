@@ -183,6 +183,7 @@ class PanelHuntTotal(Range):
     display_name = "Number of Panel Hunt Panels"
     range_start = 5
     range_end = 100
+    default = 40
 
 
 class PanelHuntRequiredPercentage(Range):
@@ -192,6 +193,7 @@ class PanelHuntRequiredPercentage(Range):
     display_name = "Percentage of extra panel hunt panels"
     range_start = 20
     range_end = 100
+    default = 63
 
 
 class PuzzleRandomization(Choice):
