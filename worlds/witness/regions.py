@@ -11,7 +11,7 @@ from worlds.generic.Rules import CollectionRule
 
 from .data import static_logic as static_witness_logic
 from .data.utils import dnf_remove_redundancies
-from .locations import WitnessPlayerLocations, static_witness_locations
+from .locations import WitnessPlayerLocations
 from .player_logic import WitnessPlayerLogic
 
 if TYPE_CHECKING:

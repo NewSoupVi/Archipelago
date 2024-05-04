@@ -18,8 +18,7 @@ When the world has parsed its options, a second function is called to finalize t
 import copy
 from collections import defaultdict
 from functools import lru_cache
-from logging import warning
-from typing import TYPE_CHECKING, Dict, FrozenSet, List, Set, Tuple, cast
+from typing import TYPE_CHECKING, Dict, FrozenSet, List, Set, cast
 
 from .data import static_logic as static_witness_logic
 from .data.item_definition_classes import DoorItemDefinition, ItemCategory, ProgressiveItemDefinition
@@ -37,6 +36,7 @@ from .data.utils import (
     get_early_caves_list,
     get_early_caves_start_list,
     get_elevators_come_to_you,
+    get_entity_hunt,
     get_ep_all_individual,
     get_ep_easy,
     get_ep_no_eclipse,
@@ -48,7 +48,7 @@ from .data.utils import (
     get_simple_panels,
     get_symbol_shuffle_list,
     get_vault_exclusion_list,
-    parse_lambda, get_entity_hunt,
+    parse_lambda,
 )
 
 if TYPE_CHECKING:

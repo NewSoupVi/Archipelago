@@ -2,7 +2,6 @@
 Defines the rules by which locations can be accessed,
 depending on the items received
 """
-from collections import Counter
 from typing import TYPE_CHECKING, FrozenSet
 
 from BaseClasses import CollectionState
@@ -10,7 +9,6 @@ from BaseClasses import CollectionState
 from worlds.generic.Rules import CollectionRule, set_rule
 
 from .data import static_logic as static_witness_logic
-from .data.utils import dnf_and
 from .locations import WitnessPlayerLocations
 from .player_logic import WitnessPlayerLogic
 
