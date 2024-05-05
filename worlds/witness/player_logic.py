@@ -517,6 +517,9 @@ class WitnessPlayerLogic:
             if entity_id in self.DOOR_ITEMS_BY_ID:
                 del self.DOOR_ITEMS_BY_ID[entity_id]
 
+        if victory == "panel_hunt":
+            self.COMPLETELY_DISABLED_ENTITIES.discard("0x2FAF6")
+
     def find_unsolvable_entities(self, world: "WitnessWorld") -> None:
         """
         Settings like "shuffle_postgame: False" may disable certain panels.
