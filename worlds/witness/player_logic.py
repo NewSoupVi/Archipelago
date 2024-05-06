@@ -59,7 +59,7 @@ class WitnessPlayerLogic:
     """WITNESS LOGIC CLASS"""
 
     @lru_cache(maxsize=None)
-    def reduce_req_within_region(self, entity_hex: str, allow_victory: bool) -> FrozenSet[FrozenSet[str]]:
+    def reduce_req_within_region(self, entity_hex: str) -> FrozenSet[FrozenSet[str]]:
         """
         Panels in this game often only turn on when other panels are solved.
         Those other panels may have different item requirements.
@@ -69,9 +69,6 @@ class WitnessPlayerLogic:
         """
 
         if self.is_disabled(entity_hex):
-            return frozenset()
-
-        if entity_hex == self.VICTORY_LOCATION and not allow_victory:
             return frozenset()
 
         entity_obj = self.REFERENCE_LOGIC.ENTITIES_BY_HEX[entity_hex]
@@ -133,8 +130,10 @@ class WitnessPlayerLogic:
                 if option_entity in {"7 Lasers", "11 Lasers", "7 Lasers + Redirect", "11 Lasers + Redirect",
                                      "PP2 Weirdness", "Theater to Tunnels", "Entity Hunt"}:
                     new_items = frozenset({frozenset([option_entity])})
+                elif option_entity in self.DISABLE_EVERYTHING_BEHIND:
+                    new_items = frozenset()
                 else:
-                    theoretical_new_items = self.reduce_req_within_region(option_entity, allow_victory)
+                    theoretical_new_items = self.reduce_req_within_region(option_entity)
 
                     if not theoretical_new_items:
                         # If the dependent entity is unsolvable & it is an EP, the current entity is an Obelisk Side.
@@ -294,8 +293,8 @@ class WitnessPlayerLogic:
                 line = self.REFERENCE_LOGIC.ENTITIES_BY_HEX[line]["checkName"]
             self.ADDED_CHECKS.add(line)
 
-    @staticmethod
-    def handle_postgame(world: "WitnessWorld") -> List[List[str]]:
+
+    def handle_postgame(self, world: "WitnessWorld") -> List[List[str]]:
         """
             In shuffle_postgame, panels that become accessible "after or at the same time as the goal" are disabled.
             This mostly involves the disabling of key panels (e.g. long box when the goal is short box).
@@ -310,6 +309,7 @@ class WitnessPlayerLogic:
         victory = world.options.victory_condition
         mnt_lasers = world.options.mountain_lasers
         chal_lasers = world.options.challenge_lasers
+        panel_hunt_postgame = world.options.panel_hunt_postgame
 
         # Goal is "short box", and long box requires at least as many lasers as short box (as god intended)
         proper_shortbox_goal = victory == "mountain_box_short" and chal_lasers >= mnt_lasers
@@ -320,9 +320,13 @@ class WitnessPlayerLogic:
         # ||| Section 1: Proper postgame cases |||
         # When something only comes into logic after the goal, e.g. "longbox is postgame if the goal is shortbox".
 
+        # Disable anything directly locked by the victory panel
+        self.DISABLE_EVERYTHING_BEHIND.add(self.VICTORY_LOCATION)
+
         # If we have a long box goal, Challenge is behind the amount of lasers required to just win.
         # This is technically slightly incorrect as the Challenge Vault Box could contain a *symbol* that is required
         # to open Mountain Entry (Stars 2). However, since there is a very easy sphere 1 snipe, this is not considered.
+
         if victory == "mountain_box_long":
             postgame_adjustments.append(["Disabled Locations:", "0x0A332 (Challenge Timer Start)"])
 
@@ -341,10 +345,10 @@ class WitnessPlayerLogic:
 
         mbfd_extra_exclusions = (
             # Progressive Dots 2 behind 11 lasers in an Elevator seed with vanilla doors = :(
-                victory == "elevator" and not remote_doors
+            victory == "elevator" and not remote_doors
 
-                # Caves Shortcuts / Challenge Entry (Panel) on MBFD in a Challenge seed with vanilla doors = :(
-                or victory == "challenge" and early_caves and not remote_doors
+            # Caves Shortcuts / Challenge Entry (Panel) on MBFD in a Challenge seed with vanilla doors = :(
+            or victory == "challenge" and early_caves and not remote_doors
         )
 
         if mbfd_extra_exclusions:
@@ -364,6 +368,35 @@ class WitnessPlayerLogic:
         # So, we should disable all entities in the Caves and Tunnels *except* for those that are required to enter.
         if not (early_caves or remote_doors) and victory == "challenge":
             postgame_adjustments.append(get_caves_except_path_to_challenge_exclusion_list())
+
+        # ||| Section 3: Forced Postgame |||
+        # The player is given options to force locations to be postgame.
+        # This section handles them. (Right now, this is only panel hunt)
+
+        if victory == "panel_hunt":
+            disable_mountain_lasers = (
+                panel_hunt_postgame == "disable_mountain_lasers_locations"
+                or panel_hunt_postgame == "disable_anything_locked_by_lasers"
+            )
+
+            disable_challenge_lasers = (
+                panel_hunt_postgame == "disable_challenge_lasers_locations"
+                or panel_hunt_postgame == "disable_anything_locked_by_lasers"
+            )
+
+            if disable_mountain_lasers:
+                self.DISABLE_EVERYTHING_BEHIND.add("0x09F7F")
+                self.HUNT_ENTITIES.add("0x09F7F")
+
+                # If mountain lasers are disabled, and challenge lasers > 7, the box will need to be rotated
+                if chal_lasers > 7:
+                    postgame_adjustments.append([
+                        "Requirement Changes:",
+                        "0xFFF00 - 11 Lasers - True",
+                    ])
+            if disable_challenge_lasers:
+                self.DISABLE_EVERYTHING_BEHIND.add("0xFFF00")
+                self.HUNT_ENTITIES.add("0xFFF00")
 
         return postgame_adjustments
 
@@ -524,15 +557,12 @@ class WitnessPlayerLogic:
         We will determine these automatically and disable them as well.
         """
 
-        # if "shuffle_postgame", consider the victory location "disabled".
-        postgame_included = bool(world.options.shuffle_postgame)
-
         dirty = True
         while dirty:
             dirty = False
 
             # Re-make the dependency reduced entity requirements dict, based on the current set of disabled entities.
-            self.make_dependency_reduced_checklist(postgame_included)
+            self.make_dependency_reduced_checklist()
 
             # First step: Find unreachable regions
             reachable_regions = {"Entry"}
@@ -616,7 +646,7 @@ class WitnessPlayerLogic:
             # Disable the newly determined unreachable entities.
             self.COMPLETELY_DISABLED_ENTITIES.update(newly_discovered_disabled_entities)
 
-    def make_dependency_reduced_checklist(self, allow_victory: bool):
+    def make_dependency_reduced_checklist(self):
         """
         Every entity has a requirement. This requirement may involve other entities.
         Example: Solving a panel powers a cable, and that cable turns on the next panel.
@@ -641,7 +671,7 @@ class WitnessPlayerLogic:
 
         # Make independent requirements for entities
         for entity_hex in self.DEPENDENT_REQUIREMENTS_BY_HEX.keys():
-            indep_requirement = self.reduce_req_within_region(entity_hex, allow_victory)
+            indep_requirement = self.reduce_req_within_region(entity_hex)
 
             self.REQUIREMENTS_BY_HEX[entity_hex] = indep_requirement
 
@@ -666,7 +696,7 @@ class WitnessPlayerLogic:
                             individual_entity_requirements.append(frozenset({frozenset({entity})}))
                         # If a connection requires entities, use their newly calculated independent requirements.
                         else:
-                            entity_req = self.reduce_req_within_region(entity, allow_victory)
+                            entity_req = self.reduce_req_within_region(entity)
 
                             if self.REFERENCE_LOGIC.ENTITIES_BY_HEX[entity]["region"]:
                                 region_name = self.REFERENCE_LOGIC.ENTITIES_BY_HEX[entity]["region"]["name"]
@@ -791,11 +821,12 @@ class WitnessPlayerLogic:
                 and entity_obj["locationType"] == "Discard"
             )
             and entity_hex not in {"0x03629", "0x03505", "0x3352F"}
+            and entity_hex not in self.HUNT_ENTITIES
         ]
 
         total_panels = world.options.panel_hunt_total.value
 
-        self.HUNT_ENTITIES.update(world.random.sample(all_eligible_panels, total_panels))
+        self.HUNT_ENTITIES.update(world.random.sample(all_eligible_panels, total_panels - len(self.HUNT_ENTITIES)))
 
     def make_event_panel_lists(self) -> None:
         """
@@ -871,6 +902,7 @@ class WitnessPlayerLogic:
 
         self.EVENT_ITEM_PAIRS = dict()
         self.COMPLETELY_DISABLED_ENTITIES = set()
+        self.DISABLE_EVERYTHING_BEHIND = set()
         self.PRECOMPLETED_LOCATIONS = set()
         self.EXCLUDED_LOCATIONS = set()
         self.ADDED_CHECKS = set()
@@ -892,11 +924,12 @@ class WitnessPlayerLogic:
             "0x00BF6": "+1 Laser (Swamp Laser)",
             "0x028A4": "+1 Laser (Treehouse Laser)",
             "0x17C34": "Mountain Entry",
-            "0xFFF00": "Bottom Floor Discard Turns On",
         }
 
         self.USED_EVENT_NAMES_BY_HEX = {}
-        self.CONDITIONAL_EVENTS = {}
+        self.CONDITIONAL_EVENTS = {
+            ("0x17FA2", "0xFFF00"): "Bottom Floor Discard Turns On",
+        }
 
         # The basic requirements to solve each entity come from StaticWitnessLogic.
         # However, for any given world, the options (e.g. which item shuffles are enabled) affect the requirements.
@@ -906,7 +939,7 @@ class WitnessPlayerLogic:
 
         # After we have adjusted the raw requirements, we perform a dependency reduction for the entity requirements.
         # This will make the access conditions way faster, instead of recursively checking dependent entities each time.
-        self.make_dependency_reduced_checklist(True)
+        self.make_dependency_reduced_checklist()
 
         if world.options.victory_condition == "panel_hunt":
             self.pick_panel_hunt_panels(world)
