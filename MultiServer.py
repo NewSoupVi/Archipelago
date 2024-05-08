@@ -1620,6 +1620,20 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
             except (ValueError, TypeError):
                 errors.add('InvalidItemsHandling')
 
+            if game != "ArchipelagoVersion":
+                team, slot = ctx.connect_names[args['name']]
+
+                items = get_received_items(ctx, team, 1, True)
+
+                items += get_start_inventory(ctx, 1, True)
+
+                itemcode = [v for k, v in archipelago_version_game_items.items() if k == game][0]
+
+                print({item.item for item in items})
+
+                if itemcode not in {item.item for item in items}:
+                    errors.add(f"{game} has not been unlocked yet!")
+
         # only exact version match allowed
         if ctx.compatibility == 0 and args['version'] != version_tuple:
             errors.add('IncompatibleVersion')
