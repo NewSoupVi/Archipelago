@@ -702,12 +702,12 @@ def make_compact_hint_data(hint: WitnessWordedHint, local_player_number: int) ->
         if hunt_panels:
             arg_2 += 0x100 * hunt_panels
     elif location is not None:
-        arg_2 = location.player
-    else:
-        if local_player_number == local_player_number and hint.vague_location_hint:
+        if local_player_number == hint.location.player and hint.vague_location_hint:
             arg_2 = -1  # Don't scout
         else:
-            arg_2 = local_player_number
+            arg_2 = location.player
+    else:
+        arg_2 = local_player_number
 
     return hint.wording, arg_1, arg_2
 
