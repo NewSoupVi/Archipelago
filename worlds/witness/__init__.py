@@ -328,7 +328,7 @@ class WitnessWorld(World):
 
     def pre_fill(self) -> None:
         mode = self.options.puzzle_randomization
-        if mode == "sigma_expert" or mode == "umbra_variety" or self.options.victory_condition == "panel_hunt":
+        if mode != "sigma_expert" and mode != "umbra_variety" and self.options.victory_condition != "panel_hunt":
             return
         # Expert/Variety/PanelHunt: Pick an early item to add to local early items.
         # Done in pre_fill because fill_hook is too late for early items.
@@ -343,7 +343,7 @@ class WitnessWorld(World):
 
     def fill_hook(self, progitempool: List[Item], _, _2, fill_locations: List[Location]) -> None:
         mode = self.options.puzzle_randomization
-        if mode != "sigma_expert" and mode != "umbra_variety" and self.options.victory_condition != "panel_hunt":
+        if mode == "sigma_expert" or mode == "umbra_variety" or self.options.victory_condition == "panel_hunt":
             return
         # None of Expert/Variety/PanelHunt: Pick an early item to put on Tutorial Gate Open.
         # Done after plando to avoid conflicting with it.
