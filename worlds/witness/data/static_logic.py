@@ -16,6 +16,7 @@ from .utils import (
     get_items,
     get_sigma_expert_logic,
     get_sigma_normal_logic,
+    get_umbra_variety_logic,
     get_vanilla_logic,
     parse_lambda,
 )
@@ -279,6 +280,11 @@ def get_sigma_expert() -> StaticWitnessLogicObj:
     return StaticWitnessLogicObj(get_sigma_expert_logic())
 
 
+@lru_cache
+def get_umbra_variety() -> StaticWitnessLogicObj:
+    return StaticWitnessLogicObj(get_umbra_variety_logic())
+
+
 def __getattr__(name):
     if name == "vanilla":
         return get_vanilla()
@@ -286,6 +292,8 @@ def __getattr__(name):
         return get_sigma_normal()
     elif name == "sigma_expert":
         return get_sigma_expert()
+    elif name == "umbra_variety":
+        return get_umbra_variety()
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 

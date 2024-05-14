@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Set
 
 from BaseClasses import ItemClassification
 
@@ -12,6 +12,22 @@ ITEM_GROUPS: Dict[str, List[str]] = {}
 # Useful items that are treated specially at generation time and should not be automatically added to the player's
 # item list during get_progression_items.
 _special_usefuls: List[str] = ["Puzzle Skip"]
+
+ALWAYS_GOOD_SYMBOL_ITEMS : Set[str] = {"Dots", "Black/White Squares", "Symmetry", "Shapers", "Stars"}
+
+MODE_SPECIFIC_GOOD_ITEMS: Dict[str, Set[str]] = {
+    "none": set(),
+    "sigma_normal": set(),
+    "sigma_expert": {"Triangles"},
+    "umbra_variety": {"Triangles"}
+}
+
+MODE_SPECIFIC_GOOD_DISCARD_ITEMS: Dict[str, Set[str]] = {
+    "none": {"Triangles"},
+    "sigma_normal": {"Triangles"},
+    "sigma_expert": {"Arrows"},
+    "umbra_variety": set()  # Variety Discards use both Arrows and Triangles, so neither of them are that useful alone
+}
 
 
 def populate_items() -> None:
