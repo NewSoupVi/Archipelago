@@ -1,3 +1,4 @@
+from collections import defaultdict
 from functools import lru_cache
 from typing import Dict, List
 
@@ -11,6 +12,7 @@ from .item_definition_classes import (
 )
 from .utils import (
     define_new_region,
+    dnf_remove_redundancies,
     get_items,
     get_sigma_expert_logic,
     get_sigma_normal_logic,
@@ -41,7 +43,8 @@ class StaticWitnessLogicObj:
                 current_region = new_region_and_connections[0]
                 region_name = current_region["name"]
                 self.ALL_REGIONS_BY_NAME[region_name] = current_region
-                self.STATIC_CONNECTIONS_BY_REGION_NAME[region_name] = new_region_and_connections[1]
+                for connection in new_region_and_connections[1]:
+                    self.CONNECTIONS_WITH_DUPLICATES[region_name][connection[0]].add(connection[1])
                 current_area["regions"].append(region_name)
                 continue
 
@@ -74,19 +77,22 @@ class StaticWitnessLogicObj:
                     "region": None,
                     "id": None,
                     "entityType": location_id,
+                    "locationType": None,
                     "area": current_area,
                 }
 
                 self.ENTITIES_BY_NAME[self.ENTITIES_BY_HEX[entity_hex]["checkName"]] = self.ENTITIES_BY_HEX[entity_hex]
 
                 self.STATIC_DEPENDENT_REQUIREMENTS_BY_HEX[entity_hex] = {
-                    "panels": parse_lambda(required_panel_lambda)
+                    "entities": parse_lambda(required_panel_lambda)
                 }
 
                 # Lasers and Doors exist in a region, but don't have a regional *requirement*
                 # If a laser is activated, you don't need to physically walk up to it for it to count
                 # As such, logically, they behave more as if they were part of the "Entry" region
-                self.ALL_REGIONS_BY_NAME["Entry"]["panels"].append(entity_hex)
+                self.ALL_REGIONS_BY_NAME["Entry"]["entities"].append(entity_hex)
+                # However, it will also be important to keep track of their physical location for postgame purposes.
+                current_region["physical_entities"].append(entity_hex)
                 continue
 
             required_item_lambda = line_split.pop(0)
@@ -96,19 +102,28 @@ class StaticWitnessLogicObj:
                 "Laser Hedges",
                 "Laser Pressure Plates",
             }
-            is_vault_or_video = "Vault" in entity_name or "Video" in entity_name
+            is_vault_or_video = "Vault" in entity_name
 
             if "Discard" in entity_name:
+                entity_type = "Panel"
                 location_type = "Discard"
-            elif is_vault_or_video or entity_name == "Tutorial Gate Close":
+            elif is_vault_or_video:
+                entity_type = "Panel"
                 location_type = "Vault"
             elif entity_name in laser_names:
-                location_type = "Laser"
+                entity_type = "Laser"
+                location_type = None
             elif "Obelisk Side" in entity_name:
+                entity_type = "Obelisk Side"
                 location_type = "Obelisk Side"
             elif "EP" in entity_name:
+                entity_type = "EP"
                 location_type = "EP"
+            elif entity_hex.startswith("0xFF"):
+                entity_type = "Event"
+                location_type = None
             else:
+                entity_type = "Panel"
                 location_type = "General"
 
             required_items = parse_lambda(required_item_lambda)
@@ -117,11 +132,11 @@ class StaticWitnessLogicObj:
             required_items = frozenset(required_items)
 
             requirement = {
-                "panels": required_panels,
+                "entities": required_panels,
                 "items": required_items
             }
 
-            if location_type == "Obelisk Side":
+            if entity_type == "Obelisk Side":
                 eps = set(next(iter(required_panels)))
                 eps -= {"Theater to Tunnels"}
 
@@ -136,7 +151,8 @@ class StaticWitnessLogicObj:
                 "entity_hex": entity_hex,
                 "region": current_region,
                 "id": int(location_id),
-                "entityType": location_type,
+                "entityType": entity_type,
+                "locationType": location_type,
                 "area": current_area,
             }
 
@@ -145,7 +161,31 @@ class StaticWitnessLogicObj:
             self.ENTITIES_BY_NAME[self.ENTITIES_BY_HEX[entity_hex]["checkName"]] = self.ENTITIES_BY_HEX[entity_hex]
             self.STATIC_DEPENDENT_REQUIREMENTS_BY_HEX[entity_hex] = requirement
 
-            current_region["panels"].append(entity_hex)
+            current_region["entities"].append(entity_hex)
+            current_region["physical_entities"].append(entity_hex)
+
+    def reverse_connections(self):
+        # Iterate all connections
+        for region_name, connections in list(self.CONNECTIONS_WITH_DUPLICATES.items()):
+            for target, requirement_set in connections.items():
+                # Reverse this connection with all its possibilities, except the ones marked as "OneWay".
+                for requirement in requirement_set:
+                    remaining_options = set()
+                    for option in requirement:
+                        if not any(req == "TrueOneWay" for req in option):
+                            remaining_options.add(option)
+
+                    if remaining_options:
+                        self.CONNECTIONS_WITH_DUPLICATES[target][region_name].add(frozenset(remaining_options))
+
+    def combine_connections(self):
+        # All regions need to be present, and this dict is copied later - Thus, defaultdict is not the correct choice.
+        self.STATIC_CONNECTIONS_BY_REGION_NAME = {region_name: set() for region_name in self.ALL_REGIONS_BY_NAME}
+
+        for source, connections in self.CONNECTIONS_WITH_DUPLICATES.items():
+            for target, requirement in connections.items():
+                combined_req = dnf_remove_redundancies(frozenset().union(*requirement))
+                self.STATIC_CONNECTIONS_BY_REGION_NAME[source].add((target, combined_req))
 
     def __init__(self, lines=None) -> None:
         if lines is None:
@@ -154,6 +194,7 @@ class StaticWitnessLogicObj:
         # All regions with a list of panels in them and the connections to other regions, before logic adjustments
         self.ALL_REGIONS_BY_NAME = dict()
         self.ALL_AREAS_BY_NAME = dict()
+        self.CONNECTIONS_WITH_DUPLICATES = defaultdict(lambda: defaultdict(lambda: set()))
         self.STATIC_CONNECTIONS_BY_REGION_NAME = dict()
 
         self.ENTITIES_BY_HEX = dict()
@@ -167,6 +208,8 @@ class StaticWitnessLogicObj:
         self.ENTITY_ID_TO_NAME = dict()
 
         self.read_logic_file(lines)
+        self.reverse_connections()
+        self.combine_connections()
 
 
 # Item data parsed from WitnessItems.txt

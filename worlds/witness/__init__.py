@@ -71,6 +71,8 @@ class WitnessWorld(World):
     items_placed_early: List[str]
     own_itempool: List[WitnessItem]
 
+    panel_hunt_required_count: int
+
     def _get_slot_data(self) -> Dict[str, Any]:
         return {
             "seed": self.random.randrange(0, 1000000),
@@ -80,12 +82,14 @@ class WitnessWorld(World):
             "door_hexes_in_the_pool": self.player_items.get_door_ids_in_pool(),
             "symbols_not_in_the_game": self.player_items.get_symbol_ids_not_in_pool(),
             "disabled_entities": [int(h, 16) for h in self.player_logic.COMPLETELY_DISABLED_ENTITIES],
+            "hunt_entities": [int(h, 16) for h in self.player_logic.HUNT_ENTITIES],
             "log_ids_to_hints": self.log_ids_to_hints,
             "laser_ids_to_hints": self.laser_ids_to_hints,
             "progressive_item_lists": self.player_items.get_progressive_item_ids_in_pool(),
             "obelisk_side_id_to_EPs": static_witness_logic.OBELISK_SIDE_ID_TO_EP_HEXES,
             "precompleted_puzzles": [int(h, 16) for h in self.player_logic.EXCLUDED_LOCATIONS],
             "entity_to_name": static_witness_logic.ENTITY_ID_TO_NAME,
+            "panel_hunt_required_absolute": self.panel_hunt_required_count
         }
 
     def determine_sufficient_progression(self) -> None:
@@ -148,6 +152,13 @@ class WitnessWorld(World):
         if self.options.shuffle_lasers == "local":
             self.options.local_items.value |= self.item_name_groups["Lasers"]
 
+        if self.options.victory_condition == "panel_hunt":
+            total_panels = self.options.panel_hunt_total
+            required_percentage = self.options.panel_hunt_required_percentage
+            self.panel_hunt_required_count = round(required_percentage / 100 * total_panels)
+        else:
+            self.panel_hunt_required_count = 0
+
     def create_regions(self) -> None:
         self.player_regions.create_regions(self, self.player_logic)
 
@@ -166,7 +177,7 @@ class WitnessWorld(World):
 
         for event_location in self.player_locations.EVENT_LOCATION_TABLE:
             item_obj = self.create_item(
-                self.player_logic.EVENT_ITEM_PAIRS[event_location]
+                self.player_logic.EVENT_ITEM_PAIRS[event_location][0]
             )
             location_obj = self.get_location(event_location)
             location_obj.place_locked_item(item_obj)
@@ -188,8 +199,9 @@ class WitnessWorld(World):
         ]
         if early_items:
             random_early_item = self.random.choice(early_items)
-            if self.options.puzzle_randomization == "sigma_expert":
+            if self.options.puzzle_randomization == "sigma_expert" or self.options.victory_condition == "panel_hunt":
                 # In Expert, only tag the item as early, rather than forcing it onto the gate.
+                # Same with panel hunt, since the Tutorial Gate Open panel is used for something else
                 self.multiworld.local_early_items[self.player][random_early_item] = 1
             else:
                 # Force the item onto the tutorial gate check and remove it from our random pool.
