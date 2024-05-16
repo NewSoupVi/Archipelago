@@ -817,6 +817,16 @@ class WitnessPlayerLogic:
             "0x03629",  # Tutorial Gate Open, which is the panel that is locked by panel hunt
             "0x03505",  # Tutorial Gate Close (same thing)
             "0x3352F",  # Gate EP (same thing)
+            "0x00CDB",  # Challenge Reallocating
+            "0x0051F",  # Challenge Reallocating
+            "0x00524",  # Challenge Reallocating
+            "0x00CD4",  # Challenge Reallocating
+            "0x00CB9",  # Challenge May Be Unsolvable
+            "0x00CA1",  # Challenge May Be Unsolvable
+            "0x00C80",  # Challenge May Be Unsolvable
+            "0x00C68",  # Challenge May Be Unsolvable
+            "0x00C59",  # Challenge May Be Unsolvable
+            "0x00C22",  # Challenge May Be Unsolvable
         }
 
         all_eligible_panels = [
