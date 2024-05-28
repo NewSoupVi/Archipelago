@@ -18,10 +18,8 @@ When the world has parsed its options, a second function is called to finalize t
 import copy
 from collections import defaultdict
 from functools import lru_cache
-from math import log10
 from typing import TYPE_CHECKING, Dict, FrozenSet, List, Set, cast
 
-from .data import static_locations as static_witness_locations
 from .data import static_logic as static_witness_logic
 from .data.item_definition_classes import DoorItemDefinition, ItemCategory, ProgressiveItemDefinition
 from .data.utils import (
@@ -904,6 +902,13 @@ class WitnessPlayerLogic:
                 for panel in eligible_panels - self.HUNT_ENTITIES:
                     remaining_panels.append(panel)
                     remaining_panels_weights.append(allowance_per_area[area])
+
+            assert min(remaining_panels_weights) >= 0, (f"Somehow, an area had a negative weight when picking"
+                                                        f" hunt panels: {remaining_panels_weights}")
+
+            # I don't think this can ever happen, but let's be safe
+            if sum(remaining_panels_weights) == 0:
+                remaining_panels_weights = [1] * len(remaining_panels_weights)
 
             self.HUNT_ENTITIES.update(
                 world.random.choices(remaining_panels, weights=remaining_panels_weights, k=actual_amount_to_pick)
