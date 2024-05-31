@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from schema import And, Schema
 
-from Options import Choice, DefaultOnToggle, OptionDict, OptionGroup, PerGameCommonOptions, Range, Toggle
+from Options import Choice, DefaultOnToggle, OptionDict, PerGameCommonOptions, Range, Toggle
 
 from .data import static_logic as static_witness_logic
 from .data.item_definition_classes import ItemCategory, WeightedItemDefinition
@@ -420,49 +420,57 @@ class TheWitnessOptions(PerGameCommonOptions):
     death_link_amnesty: DeathLinkAmnesty
 
 
-witness_option_groups = [
-    OptionGroup("Puzzles & Goal", [
-        PuzzleRandomization,
-        VictoryCondition,
-        MountainLasers,
-        ChallengeLasers,
-    ]),
-    OptionGroup("Panel Hunt", [
-        PanelHuntRequiredPercentage,
-        PanelHuntTotal,
-        PanelHuntDiscourageSameAreaFactor,
-        PanelHuntPostgame,
-    ]),
-    OptionGroup("Locations", [
-        ShuffleDiscardedPanels,
-        ShuffleVaultBoxes,
-        ShuffleEnvironmentalPuzzles,
-        EnvironmentalPuzzlesDifficulty,
-        ShufflePostgame,
-        DisableNonRandomizedPuzzles,
-    ]),
-    OptionGroup("Progression Items", [
-        ShuffleSymbols,
-        ShuffleDoors,
-        DoorGroupings,
-        ShuffleLasers,
-        ShuffleBoat,
-        ObeliskKeys,
-    ]),
-    OptionGroup("Filler Items", [
-        PuzzleSkipAmount,
-        TrapPercentage,
-        TrapWeights
-    ]),
-    OptionGroup("Hints", [
-        HintAmount,
-        AreaHintPercentage,
-        LaserHints
-    ]),
-    OptionGroup("Misc", [
-        EarlyCaves,
-        ElevatorsComeToYou,
-        DeathLink,
-        DeathLinkAmnesty,
-    ])
-]
+witness_option_groups = []
+
+try:
+    from Options import OptionGroup
+
+    witness_option_groups = [
+        OptionGroup("Puzzles & Goal", [
+            PuzzleRandomization,
+            VictoryCondition,
+            MountainLasers,
+            ChallengeLasers,
+        ]),
+        OptionGroup("Panel Hunt", [
+            PanelHuntRequiredPercentage,
+            PanelHuntTotal,
+            PanelHuntDiscourageSameAreaFactor,
+            PanelHuntPostgame,
+        ]),
+        OptionGroup("Locations", [
+            ShuffleDiscardedPanels,
+            ShuffleVaultBoxes,
+            ShuffleEnvironmentalPuzzles,
+            EnvironmentalPuzzlesDifficulty,
+            ShufflePostgame,
+            DisableNonRandomizedPuzzles,
+        ]),
+        OptionGroup("Progression Items", [
+            ShuffleSymbols,
+            ShuffleDoors,
+            DoorGroupings,
+            ShuffleLasers,
+            ShuffleBoat,
+            ObeliskKeys,
+        ]),
+        OptionGroup("Filler Items", [
+            PuzzleSkipAmount,
+            TrapPercentage,
+            TrapWeights
+        ]),
+        OptionGroup("Hints", [
+            HintAmount,
+            AreaHintPercentage,
+            LaserHints
+        ]),
+        OptionGroup("Misc", [
+            EarlyCaves,
+            ElevatorsComeToYou,
+            DeathLink,
+            DeathLinkAmnesty,
+        ])
+    ]
+except ImportError:
+    pass
+
