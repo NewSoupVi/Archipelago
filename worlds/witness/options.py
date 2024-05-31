@@ -217,6 +217,19 @@ class PanelHuntPostgame(Choice):
     default = 3
 
 
+class PanelHuntDiscourageSameAreaFactor(Range):
+    """
+    The greater this value, the less likely is that many hunt panels show up in the same area.
+    At 0, hunt panels will be selected randomly.
+    At 100, hunt panels will be almost completely evenly distributed between areas.
+    """
+    display = "Panel Hunt Discourage Same Area Factor"
+
+    range_start = 0
+    range_end = 100
+    default = 40
+
+
 class PuzzleRandomization(Choice):
     """
     Puzzles in this randomizer are randomly generated. This option changes the difficulty/types of puzzles.
@@ -391,6 +404,7 @@ class TheWitnessOptions(PerGameCommonOptions):
     panel_hunt_total: PanelHuntTotal
     panel_hunt_required_percentage: PanelHuntRequiredPercentage
     panel_hunt_postgame: PanelHuntPostgame
+    panel_hunt_discourage_same_area_factor: PanelHuntDiscourageSameAreaFactor
     early_caves: EarlyCaves
     elevators_come_to_you: ElevatorsComeToYou
     trap_percentage: TrapPercentage

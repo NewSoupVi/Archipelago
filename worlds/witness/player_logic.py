@@ -18,6 +18,8 @@ When the world has parsed its options, a second function is called to finalize t
 import copy
 from collections import defaultdict
 from functools import lru_cache
+from logging import debug
+from pprint import pformat
 from typing import TYPE_CHECKING, Dict, FrozenSet, List, Set, cast
 
 from .data import static_logic as static_witness_logic
@@ -841,7 +843,7 @@ class WitnessPlayerLogic:
             "0x0A3AD",  # Reset PP
         }
 
-        all_eligible_panels = [
+        eligible_panels = [
             entity_hex for entity_hex, entity_obj in static_witness_logic.ENTITIES_BY_HEX.items()
             if entity_obj["entityType"] == "Panel" and self.solvability_guaranteed(entity_hex)
             and not (
@@ -856,8 +858,77 @@ class WitnessPlayerLogic:
         ]
 
         total_panels = world.options.panel_hunt_total.value
+        same_area_discouragement_factor = world.options.panel_hunt_discourage_same_area_factor / 100
 
-        self.HUNT_ENTITIES.update(world.random.sample(all_eligible_panels, total_panels - len(self.HUNT_ENTITIES)))
+        # If we're using random picking, just choose all the panels now and return
+        if not same_area_discouragement_factor:
+            hunt_panels = world.random.choices(eligible_panels, k=total_panels - len(self.HUNT_ENTITIES))
+            self.HUNT_ENTITIES.update(hunt_panels)
+            return
+
+        # Make a lookup of eligible hunt panels per area
+        eligible_panels_by_area = defaultdict(set)
+        for eligible_panel in eligible_panels:
+            associated_area = static_witness_logic.ENTITIES_BY_HEX[eligible_panel]["area"]["name"]
+            eligible_panels_by_area[associated_area].add(eligible_panel)
+
+        # If we're discouraging panels from the same area being picked, we have to pick panels one at a time
+        # For higher total counts, we do them in small batches for performance
+        batch_size = max(1, total_panels // 20)
+
+        contributing_percentage_per_area = {area: 0 for area in eligible_panels_by_area}
+
+        while len(self.HUNT_ENTITIES) < total_panels:
+            actual_amount_to_pick = min(batch_size, total_panels - len(self.HUNT_ENTITIES))
+
+            max_percentage = max(contributing_percentage_per_area.values())
+            if max_percentage == 0:
+                allowance_per_area = {area: 1 for area in contributing_percentage_per_area}
+            else:
+                allowance_per_area = {
+                    area: (max_percentage - current_percentage) / max_percentage
+                    for area, current_percentage in contributing_percentage_per_area.items()
+                }
+                # use same_area_discouragement as lerp factor
+                allowance_per_area = {
+                    area: (1.0 - same_area_discouragement_factor) + (weight * same_area_discouragement_factor)
+                    for area, weight in allowance_per_area.items()
+                }
+
+            assert min(allowance_per_area.values()) >= 0, (f"Somehow, an area had a negative weight when picking"
+                                                           f" hunt panels: {allowance_per_area}")
+
+            remaining_panels, remaining_panels_weights = [], []
+            for area, eligible_panels in eligible_panels_by_area.items():
+                for panel in eligible_panels - self.HUNT_ENTITIES:
+                    remaining_panels.append(panel)
+                    remaining_panels_weights.append(allowance_per_area[area])
+
+            # I don't think this can ever happen, but let's be safe
+            if sum(remaining_panels_weights) == 0:
+                remaining_panels_weights = [1] * len(remaining_panels_weights)
+
+            self.HUNT_ENTITIES.update(
+                world.random.choices(remaining_panels, weights=remaining_panels_weights, k=actual_amount_to_pick)
+            )
+
+            contributing_percentage_per_area = dict()
+            for area, eligible_panels in eligible_panels_by_area.items():
+                amount_of_already_chosen_panels = len(eligible_panels_by_area[area] & self.HUNT_ENTITIES)
+                current_percentage = amount_of_already_chosen_panels / len(self.HUNT_ENTITIES)
+                contributing_percentage_per_area[area] = current_percentage
+
+        # Some logging
+        sorted_area_percentages_dict = dict(sorted(contributing_percentage_per_area.items(), key=lambda x: x[1]))
+        sorted_area_percentages_dict = {
+            area: str(percentage) + (" (maxed)" if eligible_panels_by_area[area] <= self.HUNT_ENTITIES else "")
+            for area, percentage in sorted_area_percentages_dict.items()
+        }
+        player_name = world.multiworld.get_player_name(world.player)
+        debug(
+            f'Final area percentages for player "{player_name}" ({same_area_discouragement_factor} discouragement): '
+            f"{pformat(sorted_area_percentages_dict)}"
+        )
 
     def make_event_panel_lists(self) -> None:
         """
