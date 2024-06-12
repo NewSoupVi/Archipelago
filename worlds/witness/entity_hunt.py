@@ -13,7 +13,7 @@ class EntityHuntPicker:
     def __init__(self, player_logic: "WitnessPlayerLogic", world: "WitnessWorld", pre_picked_entities: Set[str]):
         self.player_logic = player_logic
         self.player_options = world.options
-        self.player_name = world.player_name
+        self.player_name = world.multiworld.get_player_name(world.player)
         self.random = world.random
 
         self.PRE_PICKED_HUNT_ENTITIES = pre_picked_entities.copy()
