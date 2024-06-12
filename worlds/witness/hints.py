@@ -11,8 +11,8 @@ from .data.utils import weighted_sample
 if TYPE_CHECKING:
     from . import WitnessWorld
 
-CompactHintArgs = Tuple[Union[str, int], int]
-CompactHintData = Tuple[str, Union[str, int], int]
+CompactHintArgs = Tuple[Union[str, int], [Union[str, int]]
+CompactHintData = Tuple[str, Union[str, int], [Union[str, int]]
 
 
 @dataclass
@@ -707,7 +707,7 @@ def get_compact_hint_args(hint: WitnessWordedHint, local_player_number: int) -> 
     if location and location.address is not None:
         if hint.vague_location_hint and location.player == local_player_number:
             assert hint.area is not None  # A local vague location hint should have an area argument
-            return "containing_area:" + hint.area, -1
+            return location.address, "containing_area:" + hint.area
         else:
             return location.address, location.player  # Scouting does not matter for other players (currently)
 
