@@ -11,7 +11,7 @@ from .data.utils import weighted_sample
 if TYPE_CHECKING:
     from . import WitnessWorld
 
-CompactHintArgs = Tuple[Union[str, int], [Union[str, int]]
+CompactHintArgs = Tuple[Union[str, int], Union[str, int]]
 CompactHintData = Tuple[str, Union[str, int], [Union[str, int]]
 
 
