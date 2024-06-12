@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from . import WitnessWorld
 
 CompactHintArgs = Tuple[Union[str, int], Union[str, int]]
-CompactHintData = Tuple[str, Union[str, int], [Union[str, int]]
+CompactHintData = Tuple[str, Union[str, int], Union[str, int]]
 
 
 @dataclass
