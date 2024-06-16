@@ -444,7 +444,7 @@ def main(args, seed=None, baked_server_options: Optional[Dict[str, object]] = No
             raise RuntimeError(f"{len(multiworld.indirect_condition_errors)} indirection_conditions errors were found:\n{msgs}")
 
         for msg in sorted(multiworld.indirect_condition_successes):
-            logging.info(msg)
+            logging.debug(msg)
 
         if args.spoiler:
             multiworld.spoiler.to_file(os.path.join(temp_dir, '%s_Spoiler.txt' % outfilebase))
