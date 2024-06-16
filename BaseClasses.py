@@ -19,7 +19,7 @@ import Options
 import Utils
 
 
-def validate_indirect_condition(spot, multiworld: MultiWorld):
+def validate_indirect_condition(spot, entrance, multiworld: MultiWorld):
     if isinstance(spot, Region):
         region = spot
         text = f"Region \"{region}\""
@@ -27,12 +27,11 @@ def validate_indirect_condition(spot, multiworld: MultiWorld):
         region = spot.parent_region
         text = f"The parent region \"{region}\" of {spot.__class__.__name__} \"{spot}\""
 
-    for entrance in multiworld.entrance_stack:
-        if entrance not in multiworld.indirect_connections.get(region, set()):
-            assert False, f"{text} could not be found in indirect_conditions for entrance {entrance} (Player {entrance.player}, {multiworld.worlds[entrance.player].game})"
-            # multiworld.indirect_condition_errors.add(f"{text} could not be found in indirect_conditions for entrance {entrance} (Player {entrance.player}, {multiworld.world_name_lookup[entrance.player]})")
-        else:
-            multiworld.indirect_condition_successes.add(f"{text} was correctly registered in indirect_conditions for entrance {entrance} (Player {entrance.player}, {multiworld.worlds[entrance.player].game})")
+    if entrance not in multiworld.indirect_connections.get(region, set()):
+        assert False, f"{text} could not be found in indirect_conditions for entrance {entrance} (Player {entrance.player}, {multiworld.worlds[entrance.player].game})"
+        # multiworld.indirect_condition_errors.add(f"{text} could not be found in indirect_conditions for entrance {entrance} (Player {entrance.player}, {multiworld.world_name_lookup[entrance.player]})")
+    else:
+        multiworld.indirect_condition_successes.add(f"{text} was correctly registered in indirect_conditions for entrance {entrance} (Player {entrance.player}, {multiworld.worlds[entrance.player].game})")
 
 
 if typing.TYPE_CHECKING:
@@ -175,6 +174,8 @@ class MultiWorld():
         self.local_early_items = {player: {} for player in self.player_ids}
         self.indirect_connections = {}
         self.start_inventory_from_pool: Dict[int, Options.StartInventoryPool] = {}
+        self.entrance_stack = set()
+        self.indirect_condition_errors = set()
 
         for player in range(1, players + 1):
             def set_player_attr(attr, val):
@@ -852,7 +853,7 @@ class Entrance:
 
     def can_reach(self, state: CollectionState) -> bool:
         if state.multiworld.entrance_stack:
-            validate_indirect_condition(self, state.multiworld)
+            validate_indirect_condition(self, state.multiworld.entrance_stack[-1], state.multiworld)
 
         if self.parent_region.can_reach(state):
             state.multiworld.entrance_stack.append(self)
@@ -973,7 +974,7 @@ class Region:
 
     def can_reach(self, state: CollectionState) -> bool:
         if state.multiworld.entrance_stack:
-            validate_indirect_condition(self, state.multiworld)
+            validate_indirect_condition(self, state.multiworld.entrance_stack[-1], state.multiworld)
 
         if state.stale[self.player]:
             state.update_reachable_regions(self.player)
@@ -1084,7 +1085,7 @@ class Location:
 
     def can_reach(self, state: CollectionState) -> bool:
         if state.multiworld.entrance_stack:
-            validate_indirect_condition(self, state.multiworld)
+            validate_indirect_condition(self, state.multiworld.entrance_stack[-1], state.multiworld)
 
         # self.access_rule computes faster on average, so placing it first for faster abort
         assert self.parent_region, "Can't reach location without region"
