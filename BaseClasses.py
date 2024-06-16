@@ -6,6 +6,7 @@ import functools
 import logging
 import random
 import secrets
+import sys
 import typing  # this can go away when Python 3.8 support is dropped
 from argparse import Namespace
 from collections import Counter, deque
@@ -17,6 +18,7 @@ from typing import Any, Callable, Dict, Iterable, Iterator, List, Mapping, Named
 import NetUtils
 import Options
 import Utils
+import settings
 
 
 def validate_indirect_condition(spot, entrance, multiworld: MultiWorld):
@@ -38,8 +40,9 @@ def validate_indirect_condition(spot, entrance, multiworld: MultiWorld):
             return
 
     if entrance not in multiworld.indirect_connections.get(region, set()):
-        assert False, f"{text} could not be found in indirect_conditions for entrance {entrance} (Player {entrance.player}, {multiworld.worlds[entrance.player].game})"
-        # multiworld.indirect_condition_errors.add(f"{text} could not be found in indirect_conditions for entrance {entrance} (Player {entrance.player}, {multiworld.world_name_lookup[entrance.player]})")
+        if settings.is_test:
+            assert False, f"{text} could not be found in indirect_conditions for entrance {entrance} (Player {entrance.player}, {multiworld.worlds[entrance.player].game})"
+        multiworld.indirect_condition_errors.add(f"{text} could not be found in indirect_conditions for entrance {entrance} (Player {entrance.player}, {multiworld.worlds[entrance.player].game})")
     else:
         multiworld.indirect_condition_successes.add(f"{text} was correctly registered in indirect_conditions for entrance {entrance} (Player {entrance.player}, {multiworld.worlds[entrance.player].game})")
 

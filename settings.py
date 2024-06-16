@@ -22,6 +22,7 @@ __all__ = [
 
 no_gui = False
 skip_autosave = False
+is_test = False
 _world_settings_name_cache: Dict[str, str] = {}  # TODO: cache on disk and update when worlds change
 _world_settings_name_cache_updated = False
 _lock = Lock()
