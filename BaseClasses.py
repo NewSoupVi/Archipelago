@@ -29,6 +29,11 @@ def validate_indirect_condition(spot, entrance, multiworld: MultiWorld):
 
     if region == entrance.parent_region:
         return
+    if region == entrance.connected_region:
+        return
+    if isinstance(spot, Entrance):
+        if spot.connected_region == entrance.connected_region:
+            return
 
     if entrance not in multiworld.indirect_connections.get(region, set()):
         assert False, f"{text} could not be found in indirect_conditions for entrance {entrance} (Player {entrance.player}, {multiworld.worlds[entrance.player].game})"
