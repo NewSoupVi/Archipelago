@@ -431,7 +431,7 @@ def main(args, seed=None, baked_server_options: Optional[Dict[str, object]] = No
             all_state = multiworld.get_all_state(False)
             for entrance in multiworld.get_entrances(player):
                 if entrance.access_rule:
-                    entrance.access_rule(CollectionState(multiworld))
+                    entrance.access_rule(all_state)
 
         for player in multiworld.player_ids:
             for entrance in multiworld.get_entrances(player):
