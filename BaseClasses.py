@@ -32,6 +32,8 @@ def validate_indirect_condition(spot, entrance, multiworld: MultiWorld):
     if region == entrance.connected_region:
         return
     if isinstance(spot, Entrance):
+        # This wouldn't cause any issues because if that other entrance is reachable,
+        # the connected region goes into logic anyway.
         if spot.connected_region == entrance.connected_region:
             return
 
