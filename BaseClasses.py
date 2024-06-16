@@ -174,7 +174,7 @@ class MultiWorld():
         self.local_early_items = {player: {} for player in self.player_ids}
         self.indirect_connections = {}
         self.start_inventory_from_pool: Dict[int, Options.StartInventoryPool] = {}
-        self.entrance_stack = set()
+        self.entrance_stack = []
         self.indirect_condition_errors = set()
 
         for player in range(1, players + 1):
