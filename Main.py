@@ -430,11 +430,13 @@ def main(args, seed=None, baked_server_options: Optional[Dict[str, object]] = No
         for player in multiworld.player_ids:
             all_state = multiworld.get_all_state(False)
             for entrance in multiworld.get_entrances(player):
-                entrance.can_reach(all_state)
+                if entrance.access_rule:
+                    entrance.access_rule(CollectionState(multiworld))
 
         for player in multiworld.player_ids:
             for entrance in multiworld.get_entrances(player):
-                entrance.can_reach(CollectionState(multiworld))
+                if entrance.access_rule:
+                    entrance.access_rule(CollectionState(multiworld))
 
         msgs = "\n".join(sorted(multiworld.indirect_condition_errors))
         if multiworld.indirect_condition_errors:
