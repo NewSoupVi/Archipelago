@@ -425,6 +425,11 @@ def main(args, seed=None, baked_server_options: Optional[Dict[str, object]] = No
             logger.info('Calculating playthrough.')
             multiworld.spoiler.create_playthrough(create_paths=args.spoiler > 2)
 
+        for player in multiworld.player_ids:
+            all_state = multiworld.get_all_state(False)
+            for entrance in multiworld.get_entrances(player):
+                entrance.can_reach(all_state)
+
         if args.spoiler:
             multiworld.spoiler.to_file(os.path.join(temp_dir, '%s_Spoiler.txt' % outfilebase))
 

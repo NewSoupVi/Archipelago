@@ -18,6 +18,23 @@ import NetUtils
 import Options
 import Utils
 
+
+def validate_indirect_condition(spot, multiworld: MultiWorld):
+    if isinstance(spot, Region):
+        region = spot
+        text = f"Region \"{region}\""
+    else:
+        region = spot.parent_region
+        text = f"The parent region \"{region}\" of {spot.__class__.__name__} \"{spot}\""
+
+    for entrance in multiworld.entrance_stack:
+        if entrance not in multiworld.indirect_connections.get(region, set()):
+            assert False, f"{text} could not be found in indirect_conditions for entrance {entrance} (Player {entrance.player}, {multiworld.worlds[entrance.player].game})"
+            # multiworld.indirect_condition_errors.add(f"{text} could not be found in indirect_conditions for entrance {entrance} (Player {entrance.player}, {multiworld.world_name_lookup[entrance.player]})")
+        else:
+            multiworld.indirect_condition_successes.add(f"{text} was correctly registered in indirect_conditions for entrance {entrance} (Player {entrance.player}, {multiworld.worlds[entrance.player].game})")
+
+
 if typing.TYPE_CHECKING:
     from worlds import AutoWorld
 
@@ -61,6 +78,9 @@ class MultiWorld():
     is_race: bool = False
     precollected_items: Dict[int, List[Item]]
     state: CollectionState
+    entrance_stack = []
+    indirect_condition_errors = set()
+    indirect_condition_successes = set()
 
     plando_options: PlandoOptions
     accessibility: Dict[int, Options.Accessibility]
@@ -831,10 +851,18 @@ class Entrance:
         self.player = player
 
     def can_reach(self, state: CollectionState) -> bool:
-        if self.parent_region.can_reach(state) and self.access_rule(state):
-            if not self.hide_path and not self in state.path:
-                state.path[self] = (self.name, state.path.get(self.parent_region, (self.parent_region.name, None)))
-            return True
+        if state.multiworld.entrance_stack:
+            validate_indirect_condition(self, state.multiworld)
+
+        if self.parent_region.can_reach(state):
+            state.multiworld.entrance_stack.append(self)
+            if self.access_rule(state):
+                state.multiworld.entrance_stack.pop(-1)
+                if not self.hide_path and not self in state.path:
+                    state.path[self] = (self.name, state.path.get(self.parent_region, (self.parent_region.name, None)))
+                return True
+            else:
+                state.multiworld.entrance_stack.pop(-1)
 
         return False
 
@@ -944,6 +972,9 @@ class Region:
     exits = property(get_exits, set_exits)
 
     def can_reach(self, state: CollectionState) -> bool:
+        if state.multiworld.entrance_stack:
+            validate_indirect_condition(self, state.multiworld)
+
         if state.stale[self.player]:
             state.update_reachable_regions(self.player)
         return self in state.reachable_regions[self.player]
@@ -1052,6 +1083,9 @@ class Location:
                     and (not check_access or self.can_reach(state))))
 
     def can_reach(self, state: CollectionState) -> bool:
+        if state.multiworld.entrance_stack:
+            validate_indirect_condition(self, state.multiworld)
+
         # self.access_rule computes faster on average, so placing it first for faster abort
         assert self.parent_region, "Can't reach location without region"
         return self.access_rule(state) and self.parent_region.can_reach(state)
