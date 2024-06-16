@@ -425,10 +425,16 @@ def main(args, seed=None, baked_server_options: Optional[Dict[str, object]] = No
             logger.info('Calculating playthrough.')
             multiworld.spoiler.create_playthrough(create_paths=args.spoiler > 2)
 
+        # Hopefully catch all errors in both early exiting ors and early exiting ands by running with
+        # an empty state and an all state
         for player in multiworld.player_ids:
             all_state = multiworld.get_all_state(False)
             for entrance in multiworld.get_entrances(player):
                 entrance.can_reach(all_state)
+
+        for player in multiworld.player_ids:
+            for entrance in multiworld.get_entrances(player):
+                entrance.can_reach(CollectionState(multiworld))
 
         msgs = "\n".join(sorted(multiworld.indirect_condition_errors))
         if multiworld.indirect_condition_errors:
