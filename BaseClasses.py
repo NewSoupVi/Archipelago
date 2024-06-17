@@ -40,9 +40,11 @@ def validate_indirect_condition(spot, entrance, multiworld: MultiWorld):
             return
 
     if entrance not in multiworld.indirect_connections.get(region, set()):
+        msg = f"{multiworld.worlds[entrance.player].game}, player {entrance.player}: {text} could not be found in indirect_conditions for entrance {entrance}. Suggested fix:\n"
+        msg += f"world.multiworld.register_indirect_condition(world.get_region({region.name}, world.get_entrance{entrance.name})"
         if settings.is_test:
-            assert False, f"{multiworld.worlds[entrance.player].game}, player {entrance.player}: {text} could not be found in indirect_conditions for entrance {entrance}."
-        multiworld.indirect_condition_errors.add(f"{multiworld.worlds[entrance.player].game}, player {entrance.player}: {text} could not be found in indirect_conditions for entrance {entrance}.")
+            assert False, msg
+        multiworld.indirect_condition_errors.add(msg)
     else:
         multiworld.indirect_condition_successes.add(f"{multiworld.worlds[entrance.player].game}, player {entrance.player}: {text} was correctly registered in indirect_conditions for entrance {entrance}.")
 
