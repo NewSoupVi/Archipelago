@@ -59,7 +59,7 @@ class WitnessWorld(World):
     item_name_groups = static_witness_items.ITEM_GROUPS
     location_name_groups = static_witness_locations.AREA_LOCATION_GROUPS
 
-    required_client_version = (0, 4, 5)
+    required_client_version = (0, 5, 0)
 
     player_logic: WitnessPlayerLogic
     player_locations: WitnessPlayerLocations
@@ -89,7 +89,6 @@ class WitnessWorld(World):
             "progressive_item_lists": self.player_items.get_progressive_item_ids_in_pool(),
             "obelisk_side_id_to_EPs": static_witness_logic.OBELISK_SIDE_ID_TO_EP_HEXES,
             "precompleted_puzzles": [int(h, 16) for h in self.player_logic.EXCLUDED_LOCATIONS],
-            "entity_to_name": static_witness_logic.ENTITY_ID_TO_NAME,
             "panel_hunt_required_absolute": self.panel_hunt_required_count
         }
 

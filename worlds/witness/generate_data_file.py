@@ -14,9 +14,12 @@ if __name__ == "__main__":
 
         area_to_location_ids = defaultdict(list)
         area_to_entity_ids = defaultdict(list)
+        entity_id_to_name = {}
 
         for entity_id, entity_object in static_witness_logic.ENTITIES_BY_HEX.items():
             location_id = entity_object["id"]
+
+            entity_id_to_name[entity_id] = entity_object["checkName"]
 
             area = entity_object["area"]["name"]
             area_to_entity_ids[area].append(entity_id)
@@ -43,3 +46,12 @@ if __name__ == "__main__":
             )
         )
         datafile.write("\n};\n\n")
+
+        datafile.write("inline std::map<std::int, std::string> areaNameToEntityIDs = {\n")
+        datafile.write(
+            "\n".join(
+                '\t{ ' + str(entity_id) + ', "' + entity_name + '" },'
+                for entity_id, entity_name in entity_id_to_name.items()
+            )
+        )
+        datafile.write("\n};\n")
