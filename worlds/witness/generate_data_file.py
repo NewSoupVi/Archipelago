@@ -47,7 +47,7 @@ if __name__ == "__main__":
         )
         datafile.write("\n};\n\n")
 
-        datafile.write("inline std::map<int, std::string> areaNameToEntityIDs = {\n")
+        datafile.write("inline std::map<int, std::string> entityToName = {\n")
         datafile.write(
             "\n".join(
                 '\t{ ' + str(entity_id) + ', "' + entity_name + '" },'
