@@ -1,7 +1,9 @@
 from collections import defaultdict
 
+from data import static_logic as static_witness_logic
+
 if __name__ == "__main__":
-    with open("APWitnessData.h", "w") as datafile:
+    with open("data/APWitnessData.h", "w") as datafile:
         datafile.write("""# pragma once
 
 # include <map>
@@ -9,32 +11,20 @@ if __name__ == "__main__":
 # include <string>
 
 """)
+
         area_to_location_ids = defaultdict(list)
         area_to_entity_ids = defaultdict(list)
 
-        with open("WitnessLogic.txt") as w:
-            current_area = ""
+        for entity_id, entity_object in static_witness_logic.ENTITIES_BY_HEX.items():
+            location_id = entity_object["id"]
 
-            for line in w.readlines():
-                line = line.strip()
-                if not line:
-                    continue
+            area = entity_object["area"]["name"]
+            area_to_entity_ids[area].append(entity_id)
 
-                if line.startswith("=="):
-                    current_area = line[2:-2]
-                    continue
+            if location_id is None:
+                continue
 
-                if line.endswith(":"):
-                    continue
-
-                line_split = line.split(" - ")
-                location_id = line_split[0]
-                if location_id.isnumeric():
-                    area_to_location_ids[current_area].append(location_id)
-
-                entity_id = line_split[1].split(" ", 1)[0]
-
-                area_to_entity_ids[current_area].append(entity_id)
+            area_to_location_ids[area].append(str(location_id))
 
         datafile.write("inline std::map<std::string, std::set<int64_t>> areaNameToLocationIDs = {\n")
         datafile.write(
@@ -52,4 +42,4 @@ if __name__ == "__main__":
                 for area, entity_ids in area_to_entity_ids.items()
             )
         )
-        datafile.write("\n};\n")
+        datafile.write("\n};\n\n")
