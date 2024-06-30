@@ -150,7 +150,7 @@ class WitnessPlayerLogic:
                         # If the dependent entity is unsolvable and is NOT an EP, this requirement option is invalid.
                         new_items = frozenset()
                     elif option_entity in self.ALWAYS_EVENT_NAMES_BY_HEX:
-                        new_items = frozenset({frozenset([option_entity])})
+                        new_items = frozenset({frozenset([self.ALWAYS_EVENT_NAMES_BY_HEX[option_entity]])})
                     elif (entity_hex, option_entity) in self.CONDITIONAL_EVENTS:
                         new_items = frozenset({frozenset([self.CONDITIONAL_EVENTS[(entity_hex, option_entity)]])})
                         self.USED_EVENT_NAMES_BY_HEX[option_entity].append(
@@ -702,9 +702,12 @@ class WitnessPlayerLogic:
                 if not self.solvability_guaranteed(entity) or entity in self.DISABLE_EVERYTHING_BEHIND:
                     individual_entity_requirements.append(frozenset())
                 # If a connection requires acquiring an event, add that event to its requirements.
-                elif (entity in self.ALWAYS_EVENT_NAMES_BY_HEX
-                      or entity not in self.REFERENCE_LOGIC.ENTITIES_BY_HEX):
+                elif entity not in self.REFERENCE_LOGIC.ENTITIES_BY_HEX:
                     individual_entity_requirements.append(frozenset({frozenset({entity})}))
+                elif entity in self.ALWAYS_EVENT_NAMES_BY_HEX:
+                    individual_entity_requirements.append(
+                        frozenset({frozenset({self.ALWAYS_EVENT_NAMES_BY_HEX[entity]})})
+                    )
                 # If a connection requires entities, use their newly calculated independent requirements.
                 else:
                     entity_req = self.get_entity_requirement(entity)
@@ -878,7 +881,14 @@ class WitnessPlayerLogic:
             entity_obj = self.REFERENCE_LOGIC.ENTITIES_BY_HEX[entity_hex]
             entity_name = entity_obj["checkName"]
             entity_type = entity_obj["entityType"]
-            action = " Opened" if entity_type == "Door" else " Solved"
+
+            if entity_type == "Door":
+                action = " Opened"
+            elif entity_type == "Laser":
+                action = " Activated"
+            else:
+                action = " Solved"
+
             for i, event_name in enumerate(event_names):
                 if i == 0:
                     self.EVENT_ITEM_PAIRS[entity_name + action] = (event_name, entity_hex)
