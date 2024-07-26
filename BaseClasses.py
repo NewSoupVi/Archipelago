@@ -51,7 +51,7 @@ def validate_indirect_condition(spot, entrance, multiworld: MultiWorld):
         if index_of_spot - index_of_entrance > 1:
             msg += f"\nThis was caused by a recursive can_reach call.\n"
             msg += f"The entrance access condition of \"{entrance}\" "
-            cur_spot = None
+
             for cur_spot in multiworld.condition_stack[index_of_entrance+1:index_of_spot]:
                 msg += f"checked for\n- {cur_spot.__class__.__name__} \"{cur_spot}\", which "
 
