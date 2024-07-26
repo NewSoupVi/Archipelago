@@ -36,7 +36,10 @@ def validate_indirect_condition(spot, entrance, multiworld: MultiWorld):
             multiworld.indirect_condition_skips.add(f"{multiworld.worlds[entrance.player].game}, player {entrance.player}: Entrance \"{entrance}\" checked for region \"{region}\" via spot \"{spot}\", but an indirect condition is not necessary because the region in question is the entrance's source region.\n")
         return
     if region == entrance.connected_region:
-        multiworld.indirect_condition_skips.add(f"{multiworld.worlds[entrance.player].game}, player {entrance.player}: Entrance \"{entrance}\" checked for region \"{region}\", but an indirect condition is not necessary because the region in question is the entrance's target region. This means this entrance is actually entirely unnecessary.\n")
+        if not isinstance(spot, Region) :
+            multiworld.indirect_condition_skips.add(f"{multiworld.worlds[entrance.player].game}, player {entrance.player}: Entrance \"{entrance}\" checked for region \"{region}\" via spot \"{spot}\", but an indirect condition is not necessary because the region in question is the entrance's target region. This means this entrance is actually entirely unnecessary.\n")
+        else:
+            multiworld.indirect_condition_skips.add(f"{multiworld.worlds[entrance.player].game}, player {entrance.player}: Entrance \"{entrance}\" checked for region \"{region}\", but an indirect condition is not necessary because the region in question is the entrance's target region. This means this entrance is actually entirely unnecessary.\n")
         return
     if isinstance(spot, Entrance):
         # This wouldn't cause any issues because if that other entrance is reachable,
