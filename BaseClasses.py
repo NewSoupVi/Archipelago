@@ -40,8 +40,28 @@ def validate_indirect_condition(spot, entrance, multiworld: MultiWorld):
             return
 
     if entrance not in multiworld.indirect_connections.get(region, set()):
-        msg = f"{multiworld.worlds[entrance.player].game}, player {entrance.player}: {text} could not be found in indirect_conditions for entrance {entrance}. Suggested fix:\n"
+        msg = f"{multiworld.worlds[entrance.player].game}, player {entrance.player}: {text} could not be found in indirect_conditions for entrance \"{entrance}\" from \"{entrance.parent_region}\" to \"{entrance.connected_region}\". Suggested fix:\n"
         msg += f"world.multiworld.register_indirect_condition(world.get_region(\"{region.name}\"), world.get_entrance(\"{entrance.name}\"))\n"
+
+        allowance = 2
+        if isinstance(spot, Region):
+            allowance = 1
+
+        index_of_entrance = next(i for i, cur_spot in enumerate(multiworld.condition_stack) if cur_spot == entrance)
+        index_of_spot = next(i for i, cur_spot in enumerate(multiworld.condition_stack) if cur_spot == spot)
+
+        if index_of_spot - index_of_entrance > allowance:
+            msg += f"\nThis was caused by a recursive can_reach call.\n"
+            msg += f"The entrance access condition of {entrance} "
+            cur_spot = None
+            for cur_spot in multiworld.condition_stack[index_of_entrance+1:index_of_spot]:
+                msg += f"checked for\n- {cur_spot.__class__.__name__} \"{cur_spot}\", which "
+
+            if getattr(cur_spot, "parent_region", None) == region:
+                msg += f"checked for\n- the {spot.__class__.__name__} in question, its parent region \"{spot}\".\n"
+            else:
+                msg += f"checked for\n- the {spot.__class__.__name__} in question, \"{spot}\".\n"
+
         if settings.is_test:
             assert False, msg
         multiworld.indirect_condition_errors.add(msg)
@@ -93,6 +113,7 @@ class MultiWorld():
     precollected_items: Dict[int, List[Item]]
     state: CollectionState
     entrance_stack = []
+    condition_stack = []
     indirect_condition_errors = set()
     indirect_condition_successes = set()
 
@@ -867,6 +888,7 @@ class Entrance:
         self.player = player
 
     def can_reach(self, state: CollectionState) -> bool:
+        state.multiworld.condition_stack.append(self)
         if state.multiworld.entrance_stack:
             validate_indirect_condition(self, state.multiworld.entrance_stack[-1], state.multiworld)
 
@@ -876,10 +898,12 @@ class Entrance:
                 state.multiworld.entrance_stack.pop(-1)
                 if not self.hide_path and not self in state.path:
                     state.path[self] = (self.name, state.path.get(self.parent_region, (self.parent_region.name, None)))
+                state.multiworld.condition_stack.pop(-1)
                 return True
             else:
                 state.multiworld.entrance_stack.pop(-1)
 
+        state.multiworld.condition_stack.pop(-1)
         return False
 
     def connect(self, region: Region, addresses: Any = None, target: Any = None) -> None:
@@ -989,10 +1013,13 @@ class Region:
 
     def can_reach(self, state: CollectionState) -> bool:
         if state.multiworld.entrance_stack:
+            state.multiworld.condition_stack.append(self)
             validate_indirect_condition(self, state.multiworld.entrance_stack[-1], state.multiworld)
+            state.multiworld.condition_stack.pop(-1)
 
         if state.stale[self.player]:
             state.update_reachable_regions(self.player)
+
         return self in state.reachable_regions[self.player]
 
     @property
@@ -1099,12 +1126,16 @@ class Location:
                     and (not check_access or self.can_reach(state))))
 
     def can_reach(self, state: CollectionState) -> bool:
+        state.multiworld.condition_stack.append(self)
+
         if state.multiworld.entrance_stack:
             validate_indirect_condition(self, state.multiworld.entrance_stack[-1], state.multiworld)
 
         # self.access_rule computes faster on average, so placing it first for faster abort
         assert self.parent_region, "Can't reach location without region"
-        return self.access_rule(state) and self.parent_region.can_reach(state)
+        is_good = self.access_rule(state) and self.parent_region.can_reach(state)
+        state.multiworld.condition_stack.pop(-1)
+        return is_good
 
     def place_locked_item(self, item: Item):
         if self.item:
