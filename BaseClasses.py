@@ -30,13 +30,19 @@ def validate_indirect_condition(spot, entrance, multiworld: MultiWorld):
         text = f"The parent region \"{region}\" of {spot.__class__.__name__} \"{spot}\""
 
     if region == entrance.parent_region:
+        index_of_entrance = next(i for i, cur_spot in enumerate(multiworld.condition_stack) if cur_spot == entrance)
+        index_of_spot = next(i for i, cur_spot in enumerate(multiworld.condition_stack) if cur_spot == spot)
+        if not isinstance(spot, Region) or index_of_entrance - index_of_spot > 1:
+            multiworld.indirect_condition_skips.add(f"{multiworld.worlds[entrance.player].game}, player {entrance.player}: Entrance \"{entrance}\" checked for region \"{region}\" via spot \"{spot}\", but an indirect condition is not necessary because the region in question is the entrance's source region.\n")
         return
     if region == entrance.connected_region:
+        multiworld.indirect_condition_skips.add(f"{multiworld.worlds[entrance.player].game}, player {entrance.player}: Entrance \"{entrance}\" checked for region \"{region}\", but an indirect condition is not necessary because the region in question is the entrance's target region. This means this entrance is actually entirely unnecessary.\n")
         return
     if isinstance(spot, Entrance):
         # This wouldn't cause any issues because if that other entrance is reachable,
         # the connected region goes into logic anyway.
         if spot.connected_region == entrance.connected_region:
+            multiworld.indirect_condition_skips.add(f"{multiworld.worlds[entrance.player].game}, player {entrance.player}: Entrance \"{entrance}\" checked for region \"{region}\" via another entrance {spot}, but an indirect condition is not necessary because the entrance share the same target region.\n")
             return
     if (entrance, region) in multiworld.indirect_condition_errors:
         return
@@ -117,6 +123,7 @@ class MultiWorld():
     indirect_condition_errors_messages = set()
     indirect_condition_errors = set()
     indirect_condition_successes = set()
+    indirect_condition_skips = set()
 
     plando_options: PlandoOptions
     accessibility: Dict[int, Options.Accessibility]
@@ -214,6 +221,7 @@ class MultiWorld():
         self.entrance_stack = []
         self.indirect_condition_errors = set()
         self.indirect_condition_errors_messages = set()
+        self.indirect_condition_skips = set()
 
         for player in range(1, players + 1):
             def set_player_attr(attr, val):

@@ -445,11 +445,15 @@ def main(args, seed=None, baked_server_options: Optional[Dict[str, object]] = No
                     entrance.access_rule(CollectionState(multiworld))
 
         msgs = "\n".join(sorted(multiworld.indirect_condition_errors_messages))
-        if multiworld.indirect_condition_errors_messages:
-            raise RuntimeError(f"{len(multiworld.indirect_condition_errors_messages)} indirection_conditions errors were found:\n{msgs}")
 
         for msg in sorted(multiworld.indirect_condition_successes):
             logging.debug(msg)
+
+        for msg in sorted(multiworld.indirect_condition_skips):
+            logging.debug(msg)
+
+        if multiworld.indirect_condition_errors_messages:
+            raise RuntimeError(f"{len(multiworld.indirect_condition_errors_messages)} indirection_conditions errors were found:\n{msgs}")
 
         if args.spoiler:
             multiworld.spoiler.to_file(os.path.join(temp_dir, '%s_Spoiler.txt' % outfilebase))
