@@ -68,7 +68,7 @@ def validate_indirect_condition(spot, entrance, multiworld: MultiWorld):
                 msg += f"checked for\n- the region in question, \"{spot}\".\n"
             else:
                 msg += f"checked for\n- {spot.__class__.__name__} \"{spot}\", which "
-                msg += f"checked for\n- the region in question, its parent region \"{spot}\".\n"
+                msg += f"checked for\n- the region in question, its parent region \"{region}\".\n"
 
         if settings.is_test:
             assert False, msg
