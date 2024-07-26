@@ -38,33 +38,33 @@ def validate_indirect_condition(spot, entrance, multiworld: MultiWorld):
         # the connected region goes into logic anyway.
         if spot.connected_region == entrance.connected_region:
             return
+    if (entrance, region) in multiworld.indirect_condition_errors:
+        return
 
     if entrance not in multiworld.indirect_connections.get(region, set()):
         msg = f"{multiworld.worlds[entrance.player].game}, player {entrance.player}: {text} could not be found in indirect_conditions for entrance \"{entrance}\" from \"{entrance.parent_region}\" to \"{entrance.connected_region}\". Suggested fix:\n"
         msg += f"world.multiworld.register_indirect_condition(world.get_region(\"{region.name}\"), world.get_entrance(\"{entrance.name}\"))\n"
 
-        allowance = 2
-        if isinstance(spot, Region):
-            allowance = 1
-
         index_of_entrance = next(i for i, cur_spot in enumerate(multiworld.condition_stack) if cur_spot == entrance)
         index_of_spot = next(i for i, cur_spot in enumerate(multiworld.condition_stack) if cur_spot == spot)
 
-        if index_of_spot - index_of_entrance > allowance:
+        if index_of_spot - index_of_entrance > 1:
             msg += f"\nThis was caused by a recursive can_reach call.\n"
-            msg += f"The entrance access condition of {entrance} "
+            msg += f"The entrance access condition of \"{entrance}\" "
             cur_spot = None
             for cur_spot in multiworld.condition_stack[index_of_entrance+1:index_of_spot]:
                 msg += f"checked for\n- {cur_spot.__class__.__name__} \"{cur_spot}\", which "
 
-            if getattr(cur_spot, "parent_region", None) == region:
-                msg += f"checked for\n- the {spot.__class__.__name__} in question, its parent region \"{spot}\".\n"
+            if isinstance(spot, Region):
+                msg += f"checked for\n- the region in question, \"{spot}\".\n"
             else:
-                msg += f"checked for\n- the {spot.__class__.__name__} in question, \"{spot}\".\n"
+                msg += f"checked for\n- {spot.__class__.__name__} \"{spot}\", which "
+                msg += f"checked for\n- the region in question, its parent region \"{spot}\".\n"
 
         if settings.is_test:
             assert False, msg
-        multiworld.indirect_condition_errors.add(msg)
+        multiworld.indirect_condition_errors_messages.add(msg)
+        multiworld.indirect_condition_errors.add((entrance, region))
     else:
         multiworld.indirect_condition_successes.add(f"{multiworld.worlds[entrance.player].game}, player {entrance.player}: {text} was correctly registered in indirect_conditions for entrance {entrance}.")
 
@@ -114,6 +114,7 @@ class MultiWorld():
     state: CollectionState
     entrance_stack = []
     condition_stack = []
+    indirect_condition_errors_messages = set()
     indirect_condition_errors = set()
     indirect_condition_successes = set()
 
@@ -212,6 +213,7 @@ class MultiWorld():
         self.start_inventory_from_pool: Dict[int, Options.StartInventoryPool] = {}
         self.entrance_stack = []
         self.indirect_condition_errors = set()
+        self.indirect_condition_errors_messages = set()
 
         for player in range(1, players + 1):
             def set_player_attr(attr, val):
