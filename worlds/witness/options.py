@@ -314,6 +314,15 @@ class DeathLinkAmnesty(Range):
     default = 1
 
 
+class EntranceRando(Choice):
+    """
+    a
+    """
+    option_off = 0
+    option_coupled = 1
+    option_decoupled = 2
+
+
 @dataclass
 class TheWitnessOptions(PerGameCommonOptions):
     puzzle_randomization: PuzzleRandomization
@@ -343,6 +352,7 @@ class TheWitnessOptions(PerGameCommonOptions):
     laser_hints: LaserHints
     death_link: DeathLink
     death_link_amnesty: DeathLinkAmnesty
+    entrance_rando: EntranceRando
 
 
 witness_option_groups = [

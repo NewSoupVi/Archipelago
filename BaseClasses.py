@@ -802,6 +802,7 @@ class CollectionState():
 
         if not changed and event:
             self.prog_items[item.player][item.name] += 1
+            print(f"Collected {item.name}")
             changed = True
 
         self.stale[item.player] = True

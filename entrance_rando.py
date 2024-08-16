@@ -158,6 +158,7 @@ class ERPlacementState:
             placeable_randomized_exits = [ex for region in self.world.multiworld.get_regions(self.world.player)
                                           for ex in region.exits if not ex.connected_region]
         self.world.random.shuffle(placeable_randomized_exits)
+        print(placeable_randomized_exits)
         return placeable_randomized_exits
 
     def _connect_one_way(self, source_exit: Entrance, target_entrance: Entrance) -> None:
@@ -250,7 +251,8 @@ def disconnect_entrance_for_randomization(entrance: Entrance, target_group: Opti
         target = parent_region.create_er_target(entrance.name)
     else:
         # for 1-ways, the child region needs a target and coupling/naming is not a concern
-        target = child_region.create_er_target(child_region.name)
+        current_name = child_region.name
+        target = child_region.create_er_target(current_name)
     target.randomization_type = entrance.randomization_type
     target.randomization_group = target_group or entrance.randomization_group
 
@@ -287,19 +289,29 @@ def randomize_entrances(
             entrance_lookup.remove(entrance)
         # propagate new connections
         er_state.collection_state.update_reachable_regions(world.player)
+        er_state.collection_state.sweep_for_events()
         if on_connect:
             on_connect(er_state, placed_exits)
+        print(f"Connected {source_exit}, {target_entrance}")
 
     def find_pairing(dead_end: bool, require_new_regions: bool) -> bool:
         nonlocal perform_validity_check
         placeable_exits = er_state.find_placeable_exits(perform_validity_check)
+
+        print(len([placeable_exit for placeable_exit in placeable_exits if placeable_exit.randomization_type == EntranceType.TWO_WAY]))
+        if len([placeable_exit for placeable_exit in placeable_exits if placeable_exit.randomization_type == EntranceType.TWO_WAY]) == 2:
+            pass
+
         for source_exit in placeable_exits:
             target_groups = target_group_lookup[source_exit.randomization_group]
-            for target_entrance in entrance_lookup.get_targets(target_groups, dead_end, preserve_group_order):
+            targets = entrance_lookup.get_targets(target_groups, dead_end, preserve_group_order)
+            for target_entrance in targets:
                 # requiring a new region is a proxy for enforcing new entrances are added, thus growing the search
                 # space. this is not quite a full fidelity conversion, but doesn't seem to cause issues enough
                 # to do more complex checks.
                 # the new region requirement can be ignored on a beaten minimal, islands are no issue there
+                if target_entrance.name == "Outside Windmill to Town":
+                    pass
                 region_requirement_satisfied = (not perform_validity_check or not require_new_regions
                                                 or target_entrance.connected_region not in er_state.placed_regions)
                 if region_requirement_satisfied and source_exit.can_connect_to(target_entrance, er_state):
@@ -314,6 +326,7 @@ def randomize_entrances(
             # branch in a success state (when all regions of the preferred type have been placed, but there are still
             # additional unplaced entrances into those regions)
             if require_new_regions:
+                problematic_regions = [e for e in lookup if e.connected_region not in er_state.placed_regions]
                 if all(e.connected_region in er_state.placed_regions for e in lookup):
                     return False
 
