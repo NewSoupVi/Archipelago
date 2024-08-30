@@ -481,6 +481,8 @@ def word_area_hint(world: "WitnessWorld", hinted_area: str, area_items: List[Ite
     any local lasers to be found in this area.
     """
 
+    area_items = [item for item in area_items if item is not None]
+
     local_progression = sum(item.player == world.player and item.advancement for item in area_items)
     non_local_progression = sum(item.player != world.player and item.advancement for item in area_items)
 
