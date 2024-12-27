@@ -169,6 +169,7 @@ class ERPlacementState:
             placeable_randomized_exits = [ex for region in self.world.multiworld.get_regions(self.world.player)
                                           for ex in region.exits if not ex.connected_region]
         self.world.random.shuffle(placeable_randomized_exits)
+        print(placeable_randomized_exits)
         return placeable_randomized_exits
 
     def _connect_one_way(self, source_exit: Entrance, target_entrance: Entrance) -> None:
@@ -285,7 +286,8 @@ def disconnect_entrance_for_randomization(entrance: Entrance, target_group: Opti
         target = parent_region.create_er_target(entrance.name)
     else:
         # for 1-ways, the child region needs a target and coupling/naming is not a concern
-        target = child_region.create_er_target(child_region.name)
+        current_name = child_region.name
+        target = child_region.create_er_target(current_name)
     target.randomization_type = entrance.randomization_type
     target.randomization_group = target_group or entrance.randomization_group
 
@@ -332,10 +334,16 @@ def randomize_entrances(
         er_state.collection_state.sweep_for_advancements()
         if on_connect:
             on_connect(er_state, placed_exits)
+        print(f"Connected {source_exit}, {target_entrance}")
 
     def find_pairing(dead_end: bool, require_new_exits: bool) -> bool:
         nonlocal perform_validity_check
         placeable_exits = er_state.find_placeable_exits(perform_validity_check)
+
+        print(len([placeable_exit for placeable_exit in placeable_exits if placeable_exit.randomization_type == EntranceType.TWO_WAY]))
+        if len([placeable_exit for placeable_exit in placeable_exits if placeable_exit.randomization_type == EntranceType.TWO_WAY]) == 2:
+            pass
+
         for source_exit in placeable_exits:
             target_groups = target_group_lookup[source_exit.randomization_group]
             for target_entrance in entrance_lookup.get_targets(target_groups, dead_end, preserve_group_order):

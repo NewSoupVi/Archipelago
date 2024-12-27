@@ -3,9 +3,10 @@ Defines Region for The Witness, assigns locations to them,
 and connects them with the proper requirements
 """
 from collections import defaultdict
-from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Dict, List, Set, Tuple, cast, Optional
 
-from BaseClasses import Entrance, Region
+from BaseClasses import Entrance, Region, EntranceType, CollectionState
+from entrance_rando import disconnect_entrance_for_randomization, ERPlacementState, EntranceLookup
 
 from worlds.generic.Rules import CollectionRule
 
@@ -17,6 +18,45 @@ from .player_logic import WitnessPlayerLogic
 
 if TYPE_CHECKING:
     from . import WitnessWorld
+
+
+class WitnessEntrance(Entrance):
+    randomizable: bool = True
+
+    def can_connect_to(self, other: Entrance, er_state: ERPlacementState) -> bool:
+        if not super().can_connect_to(other, er_state):
+            return False
+
+        world = cast("WitnessWorld", er_state.collection_state.multiworld.worlds[self.player])
+
+        unplaced_entrances = [entrance for region in world.multiworld.get_regions(world.player)
+                              for entrance in region.entrances if not entrance.parent_region]
+        if world.player_regions.dead_end_regions is None:
+            fake_er_lookup = EntranceLookup(world.random, True)
+            world.player_regions.dead_end_regions = {
+                entrance.connected_region
+                for entrance in unplaced_entrances
+                if not fake_er_lookup._can_lead_to_randomizable_exits(entrance)
+            }
+
+        eligible_exits = [
+            potential_exit for potential_exit in other.connected_region.exits
+            if potential_exit.name != other.name
+            and not potential_exit.connected_region
+        ]
+
+        if not eligible_exits:
+            return True
+
+        assume_new_region_state = er_state.collection_state.copy()
+        assume_new_region_state.reachable_regions[world.player].add(other.connected_region)
+        if len(er_state.placed_regions) > 10: # Arbitrary number
+            assume_new_region_state.reachable_regions[world.player] |= world.player_regions.dead_end_regions
+
+        return any(
+            potential_exit.can_reach(assume_new_region_state)
+            for potential_exit in eligible_exits
+        )
 
 
 class WitnessPlayerRegions:
@@ -38,6 +78,7 @@ class WitnessPlayerRegions:
         self.player_locations = player_locations
         self.two_way_entrance_register: Dict[Tuple[str, str], List[Entrance]] = defaultdict(lambda: [])
         self.created_region_names: Set[str] = set()
+        self.dead_end_regions = None
 
     @staticmethod
     def make_lambda(item_requirement: WitnessRule, world: "WitnessWorld") -> Optional[CollectionRule]:
@@ -56,30 +97,41 @@ class WitnessPlayerRegions:
         connect two regions and set the corresponding requirement
         """
 
-        # Remove any possibilities where being in the target region would be required anyway.
-        real_requirement = frozenset({option for option in req if target not in option})
+        er_type = EntranceType.TWO_WAY
+        randomizable = False
+        if world.options.entrance_rando and target in static_witness_logic.ER_ENTRANCES.get(source, []):
+            real_requirement = frozenset({option - {"True", "TrueOneWay"} for option in req})
+            final_requirement = frozenset({option - frozenset({source}) for option in real_requirement})
+            randomizable = True
+        else:
+            # Remove any possibilities where being in the target region would be required anyway.
+            real_requirement = frozenset({option for option in req if target not in option})
 
-        # Dissolve any "True" or "TrueOneWay"
-        real_requirement = frozenset({option - {"True", "TrueOneWay"} for option in real_requirement})
+            # Dissolve any "True" or "TrueOneWay"
+            real_requirement = frozenset({option - {"True", "TrueOneWay"} for option in real_requirement})
 
-        # If there is no way to actually use this connection, don't even bother making it.
-        if not real_requirement:
-            return
+            # If there is no way to actually use this connection, don't even bother making it.
+            if not real_requirement:
+                return
 
-        # We don't need to check for the accessibility of the source region.
-        final_requirement = frozenset({option - frozenset({source}) for option in real_requirement})
-        final_requirement = optimize_witness_rule(final_requirement)
+            # We don't need to check for the accessibility of the source region.
+            final_requirement = frozenset({option - frozenset({source}) for option in real_requirement})
+            final_requirement = optimize_witness_rule(final_requirement)
 
         source_region = regions_by_name[source]
         target_region = regions_by_name[target]
 
         connection_name = source + " to " + target
 
-        connection = Entrance(
+        print(f"Regio: Connecting {source_region} to {target_region} via {final_requirement}")
+
+        connection = WitnessEntrance(
             world.player,
             connection_name,
-            source_region
+            source_region,
         )
+
+        connection.randomizable = randomizable
 
         rule = self.make_lambda(final_requirement, world)
         if rule is not None:
@@ -90,6 +142,8 @@ class WitnessPlayerRegions:
 
         self.two_way_entrance_register[source, target].append(connection)
         self.two_way_entrance_register[target, source].append(connection)
+
+        connection.randomization_type = er_type
 
         # Register any necessary indirect connections
         mentioned_regions = {

@@ -2,14 +2,16 @@
 
 Entry (Entry):
 
-Tutorial First Hallway (Tutorial First Hallway) - Entry - True - Tutorial First Hallway Room - 0x00064:
+Tutorial First Hallway (Tutorial First Hallway) - Entry - True - Tutorial First Hallway Room - 0x99992:
 158000 - 0x00064 (Straight) - True - True
 159510 - 0x01848 (EP) - 0x00064 - True
+Door - 0x99992 (Door) - 0x00064
 
-Tutorial First Hallway Room (Tutorial First Hallway) - Tutorial - 0x00182:
+Tutorial First Hallway Room (Tutorial First Hallway) - Tutorial - 0x99991:
 158001 - 0x00182 (Bend) - True - True
+Door - 0x99991 (Door) - 0x00182
 
-Tutorial (Tutorial) - Outside Tutorial - 0x03629:
+Tutorial (Tutorial) - Outside Tutorial - 0x99990:
 158002 - 0x00293 (Front Center) - True - True
 158003 - 0x00295 (Center Left) - 0x00293 - True
 158004 - 0x002C2 (Front Left) - 0x00295 - True
@@ -22,6 +24,7 @@ Tutorial (Tutorial) - Outside Tutorial - 0x03629:
 159512 - 0x33530 (Cloud EP) - True - True
 159513 - 0x33600 (Patio Flowers EP) - 0x0C373 - True
 159517 - 0x3352F (Gate EP) - 0x03505 - True
+Door - 0x99990 (Gate) - 0x03629
 
 ==Tutorial (Outside)==
 

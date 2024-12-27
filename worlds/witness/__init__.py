@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional, cast
 from BaseClasses import CollectionState, Entrance, Location, Region, Tutorial
 
 from Options import OptionError, PerGameCommonOptions, Toggle
+from entrance_rando import randomize_entrances, disconnect_entrance_for_randomization
 from worlds.AutoWorld import WebWorld, World
 
 from .data import static_items as static_witness_items
@@ -259,6 +260,16 @@ class WitnessWorld(World):
                 f"""Location "{loc}" had to be added to {self.player_name}'s world
                 due to insufficient sphere 1 size."""
             )
+
+    def pre_fill(self) -> None:
+        if self.options.entrance_rando:
+            entrances = sorted(self.multiworld.get_entrances(self.player), key=lambda x: x.name)
+            for entrance in entrances:
+                if not entrance.randomizable:
+                    continue
+                disconnect_entrance_for_randomization(entrance)
+            randomize_entrances(self, self.options.entrance_rando == "coupled", {0: [0]})
+        self.topology_present = bool(self.options.entrance_rando)
 
     def create_items(self) -> None:
         # Determine pool size.
