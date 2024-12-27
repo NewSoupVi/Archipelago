@@ -224,7 +224,7 @@ class StaticWitnessLogicObj:
 
         for source, connections in self.CONNECTIONS_WITH_DUPLICATES.items():
             for target, requirement in connections.items():
-                if any(any(self.ENTITIES_BY_HEX.get(entity, {}).get("entityType", "") == "Door" for entity in sub_list) for sub_req in requirement for sub_list in sub_req):
+                if any(any(self.ENTITIES_BY_HEX.get(entity, {}).get("entityType", "") == "Door" and not entity in {"0x99991", "0x99992"} for entity in sub_list) for sub_req in requirement for sub_list in sub_req):
                     self.ER_ENTRANCES.setdefault(source, set()).add(target)
                 combined_req = logical_or_witness_rules(requirement)
                 self.STATIC_CONNECTIONS_BY_REGION_NAME[source].add((target, combined_req))

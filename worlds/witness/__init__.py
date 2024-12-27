@@ -5,6 +5,7 @@ import dataclasses
 from logging import error, warning
 from typing import Any, Dict, List, Optional, cast
 
+import Utils
 from BaseClasses import CollectionState, Entrance, Location, Region, Tutorial
 
 from Options import OptionError, PerGameCommonOptions, Toggle
@@ -239,6 +240,9 @@ class WitnessWorld(World):
         needed_size += self.options.shuffle_symbols
         needed_size += self.options.shuffle_doors > 0
 
+        if self.options.entrance_rando:
+            needed_size = 1000
+
         # Then, add checks in order until the required amount of sphere 1 checks is met.
 
         extra_checks = [
@@ -269,6 +273,8 @@ class WitnessWorld(World):
                     continue
                 disconnect_entrance_for_randomization(entrance)
             randomize_entrances(self, self.options.entrance_rando == "coupled", {0: [0]})
+
+            Utils.visualize_regions(self.get_region(self.origin_region_name), "output.puml")
         self.topology_present = bool(self.options.entrance_rando)
 
     def create_items(self) -> None:
