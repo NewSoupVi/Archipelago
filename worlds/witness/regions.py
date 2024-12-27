@@ -23,41 +23,6 @@ if TYPE_CHECKING:
 class WitnessEntrance(Entrance):
     randomizable: bool = True
 
-    def can_connect_to(self, other: Entrance, er_state: ERPlacementState) -> bool:
-        if not super().can_connect_to(other, er_state):
-            return False
-
-        world = cast("WitnessWorld", er_state.collection_state.multiworld.worlds[self.player])
-
-        unplaced_entrances = [entrance for region in world.multiworld.get_regions(world.player)
-                              for entrance in region.entrances if not entrance.parent_region]
-        if world.player_regions.dead_end_regions is None:
-            fake_er_lookup = EntranceLookup(world.random, True)
-            world.player_regions.dead_end_regions = {
-                entrance.connected_region
-                for entrance in unplaced_entrances
-                if not fake_er_lookup._can_lead_to_randomizable_exits(entrance)
-            }
-
-        eligible_exits = [
-            potential_exit for potential_exit in other.connected_region.exits
-            if potential_exit.name != other.name
-            and not potential_exit.connected_region
-        ]
-
-        if not eligible_exits:
-            return True
-
-        assume_new_region_state = er_state.collection_state.copy()
-        assume_new_region_state.reachable_regions[world.player].add(other.connected_region)
-        if len(er_state.placed_regions) > 10: # Arbitrary number
-            assume_new_region_state.reachable_regions[world.player] |= world.player_regions.dead_end_regions
-
-        return any(
-            potential_exit.can_reach(assume_new_region_state)
-            for potential_exit in eligible_exits
-        )
-
 
 class WitnessPlayerRegions:
     """Class that defines Witness Regions"""
