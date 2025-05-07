@@ -295,6 +295,14 @@ class Group:
             self._dumping = False
 
 
+class Permission(str):
+    def __new__(cls, value):
+        instance = super().__new__(cls, value)
+        if instance not in ("disabled", "enabled", "auto", "auto-enabled", "goal"):
+            raise ValueError(f"Tried to set {cls.__name__} setting to {value}, which is not allowed.")
+        return instance
+
+
 class Bool:
     # can't subclass bool, so we use this and Union or type: ignore
     def __bool__(self) -> bool:
@@ -548,7 +556,7 @@ class ServerOptions(Group):
         for a total of 5
         """
 
-    class ReleaseMode(str):
+    class ReleaseMode(Permission):
         """
         Release modes
         A Release sends out the remaining items *from* a world that releases
@@ -559,7 +567,7 @@ class ServerOptions(Group):
         "goal" -> release is allowed after goal completion
         """
 
-    class CollectMode(str):
+    class CollectMode(Permission):
         """
         Collect modes
         A Collect sends the remaining items *to* a world that collects
@@ -570,7 +578,7 @@ class ServerOptions(Group):
         "goal" -> collect is allowed after goal completion
         """
 
-    class RemainingMode(str):
+    class RemainingMode(Permission):
         """
         Remaining modes
         !remaining handling, that tells a client which items remain in their pool
