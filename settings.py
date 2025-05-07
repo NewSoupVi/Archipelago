@@ -174,6 +174,10 @@ class Group:
                 none_type = type(None)
                 for cls in candidates:
                     assert isinstance(cls, type), f"{self.__class__.__name__}.{k}: type {cls} not supported in settings"
+                    if hasattr(cls, "validate_input"):
+                        cls.validate_input(v)
+                        setattr(self, k, v)
+                        break
                     if v is None and cls is none_type:
                         # assign None, i.e. from Optional
                         setattr(self, k, v)
@@ -194,8 +198,9 @@ class Group:
                     # assign scalar and hope for the best
                     setattr(self, k, v)
                     if annotation:
-                        warnings.warn(f"{self.__class__.__name__}.{k} "
-                                      f"assigned from incompatible type {type(v).__name__}")
+                        warnings.warn(
+                            f"{self.__class__.__name__}.{k} assigned from incompatible type {type(v).__name__}"
+                        )
 
     def as_dict(self, *args: str, downcast: bool = True) -> dict[str, Any]:
         return {
@@ -295,12 +300,15 @@ class Group:
             self._dumping = False
 
 
-class Permission(str):
-    def __new__(cls, value):
-        instance = super().__new__(cls, value)
-        if instance not in ("disabled", "enabled", "auto", "auto-enabled", "goal"):
-            raise ValueError(f"Tried to set {cls.__name__} setting to {value}, which is not allowed.")
-        return instance
+class StringChoice(str):
+    valid_options: ClassVar[tuple[str]]
+
+    @classmethod
+    def validate_input(cls, value: str) -> None:
+        if value not in cls.valid_options:
+            raise ValueError(
+                f"Invalid input {value} for option of type {cls.__name__}. Valid options are {cls.valid_options}"
+            )
 
 
 class Bool:
@@ -556,7 +564,7 @@ class ServerOptions(Group):
         for a total of 5
         """
 
-    class ReleaseMode(Permission):
+    class ReleaseMode(StringChoice):
         """
         Release modes
         A Release sends out the remaining items *from* a world that releases
@@ -567,7 +575,9 @@ class ServerOptions(Group):
         "goal" -> release is allowed after goal completion
         """
 
-    class CollectMode(Permission):
+        valid_options = ("disabled", "enabled", "auto", "auto-enabled", "goal")
+
+    class CollectMode(StringChoice):
         """
         Collect modes
         A Collect sends the remaining items *to* a world that collects
@@ -578,7 +588,9 @@ class ServerOptions(Group):
         "goal" -> collect is allowed after goal completion
         """
 
-    class RemainingMode(Permission):
+        valid_options = ("disabled", "enabled", "auto", "auto-enabled", "goal")
+
+    class RemainingMode(StringChoice):
         """
         Remaining modes
         !remaining handling, that tells a client which items remain in their pool
@@ -586,6 +598,8 @@ class ServerOptions(Group):
         "disabled" -> Client can never ask for remaining items
         "goal" -> Client can ask for remaining items after goal completion
         """
+
+        valid_options = ("disabled", "enabled", "goal")
 
     class AutoShutdown(int):
         """Automatically shut down the server after this many seconds without new location checks, 0 to keep running"""
