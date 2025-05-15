@@ -1,8 +1,8 @@
 from worlds.AutoWorld import AutoWorldRegister
 
-from .patches import *
-from .patches import patch_module_names
 from . import patches as patches_module
+from .patches import *  # noqa
+from .patches import patch_module_names
 
 
 def run_early_patches() -> None:
