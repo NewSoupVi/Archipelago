@@ -1,5 +1,6 @@
 import collections
 import typing
+from logging import debug
 
 from BaseClasses import Item, Location, MultiWorld
 
@@ -70,6 +71,8 @@ def balanced_shuffle(multiworld: MultiWorld, fill_locations: list[Location], ite
         player: random_count + (balanced_progression_counts[player] - random_count) * balancing_factor
         for player, random_count in expected_progression_counts_if_random.items()
     }
+
+    debug(f"Balancing location order based on per-player check density: {weights_per_player}")
 
     # Finally, we use these weights to create the shuffled location list.
     # This means that, if the balancing_factor is any higher than 0.0, locations from smaller games will show up earlier
