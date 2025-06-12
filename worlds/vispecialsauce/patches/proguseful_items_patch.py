@@ -15,7 +15,7 @@ EXTRA_PROGUSEFULS = {
     "Ocarina of Time": {"Progressive Hookshot", "Progressive Bomb Bag", "Zelda's Lullaby", "Bow"},
     "Slay the Spire": {"Boss Relic"},
     "Super Mario 64": {"Progressive Key", "Basement Key", "Second Floor Key", "Side Flip", "Backflip", "Ledge Grab", "Long Jump", "Triple Jump", "Wall Kick"},
-    "Super Mario World": {"Progressive Powerup", "Yoshi", "Carry", "Climb", "Run", "Swim"}
+    "Super Mario World": {"Progressive Powerup", "Yoshi", "Carry", "Climb", "Run", "Swim"},
     "Timespinner": {"Celestial Sash", "Talaria Attachment", "Succubus Hairpin", "Lightwall", "Djinn Inferno", "Twin Pyramid Key", "Timeworn Warp Beacon", "Modern Warp Beacon", "Mysterious Warp Beacon"},
 }
 
