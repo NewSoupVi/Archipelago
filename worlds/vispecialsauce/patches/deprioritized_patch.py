@@ -9,6 +9,7 @@ EXTRA_DEPRIORITIZED = {
     "Super Mario 64": {"Power Star"},
     "Ocarina of Time": {"Gold Skulltula Token"},
     "Sonic Adventure 2 Battle": {"Emblem"},
+    "Hollow Knight": {"Grub", "Rancid Egg"},
 }
 
 
