@@ -5,7 +5,18 @@ from BaseClasses import ItemClassification
 from worlds.AutoWorld import World
 
 EXTRA_PROGUSEFULS = {
-    "Pokemon Emerald": {"HM03 Surf"},
+    "A Link to the Past": {"Moon Pearl"},
+    "Clique": {"Button Activation"},
+    "Factorio": {"Progressive Science Pack"},
+    "Inscryption": {"Inspectometer Battery", "Pile of Meat", "Camera Replica", "Epitaph Pieces", "Film Roll"},
+    "Lingo": {"Red", "Blue", "Black", "Yellow", "Crossroads - Roof Access"},
+    "Minecraft": {"Progressive Armor", "Progressive Weapons", "Progressive Tools"},
+    "Pokemon Emerald": {"HM03 Surf", "Balance Badge", "HM06 Rock Smash", "Dynamo Badge", "HM02 Fly"},
+    "Ocarina of Time": {"Progressive Hookshot", "Progressive Bomb Bag", "Zelda's Lullaby", "Bow"},
+    "Slay the Spire": {"Boss Relic"},
+    "Super Mario 64": {"Progressive Key", "Basement Key", "Second Floor Key", "Side Flip", "Backflip", "Ledge Grab", "Long Jump", "Triple Jump", "Wall Kick"},
+    "Super Mario World": {"Progressive Powerup", "Yoshi", "Carry", "Climb", "Run", "Swim"}
+    "Timespinner": {"Celestial Sash", "Talaria Attachment", "Succubus Hairpin", "Lightwall", "Djinn Inferno", "Twin Pyramid Key", "Timeworn Warp Beacon", "Modern Warp Beacon", "Mysterious Warp Beacon"},
 }
 
 
