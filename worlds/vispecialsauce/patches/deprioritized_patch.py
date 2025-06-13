@@ -135,18 +135,33 @@ def run_deprioritized_patch() -> None:
     original_fill_restrictive = Fill.fill_restrictive
 
     def new_fill_restrictive(
-            multiworld: MultiWorld, base_state: CollectionState, locations: typing.List[Location],
-            item_pool: typing.List[Item], single_player_placement: bool = False, lock: bool = False,
-            swap: bool = True, on_place: typing.Optional[typing.Callable[[Location], None]] = None,
-            allow_partial: bool = False, allow_excluded: bool = False, one_item_per_player: bool = True,
-            name: str = "Unknown"
+        multiworld: MultiWorld,
+        base_state: CollectionState,
+        locations: typing.List[Location],
+        item_pool: typing.List[Item],
+        single_player_placement: bool = False,
+        lock: bool = False,
+        swap: bool = True,
+        on_place: typing.Optional[typing.Callable[[Location], None]] = None,
+        allow_partial: bool = False,
+        allow_excluded: bool = False,
+        one_item_per_player: bool = True,
+        name: str = "Unknown",
     ):
         if name != "Priority":
             original_fill_restrictive(
-                multiworld, base_state, locations,
-                item_pool, single_player_placement, lock,
-                swap, on_place, allow_partial, allow_excluded, one_item_per_player,
-                name
+                multiworld,
+                base_state,
+                locations,
+                item_pool,
+                single_player_placement,
+                lock,
+                swap,
+                on_place,
+                allow_partial,
+                allow_excluded,
+                one_item_per_player,
+                name,
             )
             return
 
