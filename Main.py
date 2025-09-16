@@ -368,6 +368,31 @@ def main(args, seed=None, baked_server_options: dict[str, object] | None = None)
             logger.info('Calculating playthrough.')
             multiworld.spoiler.create_playthrough(create_paths=args.spoiler > 2)
 
+        # Hopefully catch all errors in both early exiting ors and early exiting ands by running with
+        # an empty state and an all state
+        for player in multiworld.player_ids:
+            all_state = multiworld.get_all_state(False)
+            all_state.sweep_for_events()
+            for entrance in multiworld.get_entrances(player):
+                if entrance.access_rule:
+                    entrance.access_rule(all_state)
+
+        for player in multiworld.player_ids:
+            for entrance in multiworld.get_entrances(player):
+                if entrance.access_rule:
+                    entrance.access_rule(CollectionState(multiworld))
+
+        msgs = "\n".join(sorted(multiworld.indirect_condition_errors_messages))
+
+        for msg in sorted(multiworld.indirect_condition_successes):
+            logging.debug(msg)
+
+        for msg in sorted(multiworld.indirect_condition_skips):
+            logging.debug(msg)
+
+        if multiworld.indirect_condition_errors_messages:
+            raise RuntimeError(f"{len(multiworld.indirect_condition_errors_messages)} indirection_conditions errors were found:\n{msgs}")
+
         if args.spoiler:
             multiworld.spoiler.to_file(os.path.join(temp_dir, '%s_Spoiler.txt' % outfilebase))
 

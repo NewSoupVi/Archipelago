@@ -25,6 +25,7 @@ __all__ = [
 no_gui = False
 skip_autosave = False
 _world_settings_name_cache: dict[str, str] = {}  # TODO: cache on disk and update when worlds change
+is_test = False
 _world_settings_name_cache_updated = False
 _lock = Lock()
 
