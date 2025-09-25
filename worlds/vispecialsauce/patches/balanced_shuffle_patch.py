@@ -2,7 +2,8 @@ import collections
 import typing
 from logging import debug
 
-from BaseClasses import Item, Location, MultiWorld
+from BaseClasses import Item, Location, MultiWorld, CollectionState
+from worlds.ladx.LADXR import itempool
 
 
 def balanced_shuffle(multiworld: MultiWorld, fill_locations: list[Location], itempool: list[Item]) -> list[Location]:
@@ -99,7 +100,7 @@ def distribute_items_restrictive_patch():
 
     # Since distribute_early_items has to be changed anyway, it's easiest to put this patch at the start of it.
     # We just redo the early work of Fill, at a slight performance cost.
-    original_distribute_items = Fill.distribute_early_items
+    original_distribute_early_items = Fill.distribute_early_items
 
     def new_distribute_early_items(
         multiworld: MultiWorld, _fill_locations, *args, **kwargs
@@ -112,13 +113,34 @@ def distribute_items_restrictive_patch():
 
         original_order = fill_locations.copy()
 
-        _, itempool = original_distribute_items(multiworld, fill_locations, *args, **kwargs)
+        _, itempool = original_distribute_early_items(multiworld, fill_locations, *args, **kwargs)
 
         fill_locations = [location for location in original_order if not location.item]
 
         return fill_locations, itempool
 
     Fill.distribute_early_items = new_distribute_early_items
+
+    # The balanced shuffle PR has to *undo* its work later on, and this is a slight problem.
+    # We have to do a slightly more sophisticated patch here.
+
+    # We will make a new fill_restrictive that shuffles its input locations at the start.
+    original_fill_restrictive = Fill.fill_restrictive
+
+    def new_fill_restrictive(
+        multiworld: MultiWorld, base_state: CollectionState, locations: typing.List[Location], *args, **kwargs
+    ):
+        multiworld.random.shuffle(locations)
+        original_fill_restrictive(multiworld, base_state, locations, *args, **kwargs)
+
+    # We'll activate this new fill_restrictive after all progression fills are done.
+    # For this, we hook into the first function that runs after progression fills finish.
+    original_inaccessible_location_rules = Fill.inaccessible_location_rules
+    def new_inaccessible_location_rules(multiworld: MultiWorld, *args, **kwargs):
+        Fill.fill_restrictive = new_fill_restrictive
+        original_inaccessible_location_rules(multiworld, *args, **kwargs)
+
+    Fill.inaccessible_location_rules = new_inaccessible_location_rules
 
 
 def run_early_patch() -> None:
