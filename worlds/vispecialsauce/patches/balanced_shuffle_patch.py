@@ -117,30 +117,21 @@ def distribute_items_restrictive_patch():
 
         fill_locations = [location for location in original_order if not location.item]
 
+        # The balanced shuffle PR has to *undo* its work later on, and this is a slight problem.
+        # We will make a new remaining_fill that shuffles its input locations at the start.
+        original_remaining_fill = Fill.remaining_fill
+
+        def new_remaining_fill(
+            multiworld: MultiWorld, locations: typing.List[Location], *args, **kwargs
+        ):
+            multiworld.random.shuffle(locations)
+            original_remaining_fill(multiworld, locations, *args, **kwargs)
+
+        Fill.remaining_fill = new_remaining_fill
+
         return fill_locations, itempool
 
     Fill.distribute_early_items = new_distribute_early_items
-
-    # The balanced shuffle PR has to *undo* its work later on, and this is a slight problem.
-    # We have to do a slightly more sophisticated patch here.
-
-    # We will make a new fill_restrictive that shuffles its input locations at the start.
-    original_fill_restrictive = Fill.fill_restrictive
-
-    def new_fill_restrictive(
-        multiworld: MultiWorld, base_state: CollectionState, locations: typing.List[Location], *args, **kwargs
-    ):
-        multiworld.random.shuffle(locations)
-        original_fill_restrictive(multiworld, base_state, locations, *args, **kwargs)
-
-    # We'll activate this new fill_restrictive after all progression fills are done.
-    # For this, we hook into the first function that runs after progression fills finish.
-    original_inaccessible_location_rules = Fill.inaccessible_location_rules
-    def new_inaccessible_location_rules(multiworld: MultiWorld, *args, **kwargs):
-        Fill.fill_restrictive = new_fill_restrictive
-        original_inaccessible_location_rules(multiworld, *args, **kwargs)
-
-    Fill.inaccessible_location_rules = new_inaccessible_location_rules
 
 
 def run_early_patch() -> None:
