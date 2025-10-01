@@ -23,7 +23,7 @@ from .player_logic import WitnessPlayerLogic
 from .presets import witness_option_presets
 from .regions import WitnessPlayerRegions
 from .rules import set_rules
-from .test_presets import TEST_PRESETS
+from .presets_for_generic_unittests import TEST_PRESETS
 
 
 class WitnessWebWorld(WebWorld):
