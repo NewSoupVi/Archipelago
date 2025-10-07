@@ -389,11 +389,11 @@ class WitnessWorld(World):
 
                 for _ in range(0, duplicates):
                     audio_log = enabled_audio_logs.pop()
-                    self.log_ids_to_hints[int(audio_log, 16)] = compact_hint_data
+                    self.log_ids_to_hints[audio_log] = compact_hint_data
 
         # Client will generate joke hints for the remaining unfilled audio logs, including any disabled audio logs.
-        self.log_ids_to_hints.update({int(audio_log, 16): ("", -1, -1) for audio_log in enabled_audio_logs})
-        self.log_ids_to_hints.update({int(audio_log, 16): ("", -1, -1) for audio_log in disabled_audio_logs})
+        self.log_ids_to_hints.update({audio_log: ("", -1, -1) for audio_log in enabled_audio_logs})
+        self.log_ids_to_hints.update({audio_log: ("", -1, -1) for audio_log in disabled_audio_logs})
 
         # Options for the client & auto-tracker
 
