@@ -357,7 +357,7 @@ class WitnessWorld(World):
 
         all_audio_logs = [
             entity_id for entity_id, entity_obj in static_witness_logic.ENTITIES_BY_ID.items()
-            if entity_obj["entityType"] == "Audio Log"
+            if entity_obj.entity_type == "Audio Log"
         ]
         enabled_audio_logs = [
             log_id for log_id in all_audio_logs if log_id not in self.player_logic.COMPLETELY_DISABLED_ENTITIES
