@@ -551,7 +551,7 @@ class WitnessPlayerLogic:
         if not dependencies:
             return
 
-        for entity, requirement in self.DEPENDENT_REQUIREMENTS_BY_HEX.items():
+        for entity, requirement in self.DEPENDENT_REQUIREMENTS_BY_ENTITY_ID.items():
             if "items" not in requirement:
                 continue
 
@@ -562,7 +562,7 @@ class WitnessPlayerLogic:
                     if item1 in requirement_option:
                         changed_requirement_option.add(item2)
                 new_requirement_options.add(frozenset(changed_requirement_option))
-            self.DEPENDENT_REQUIREMENTS_BY_HEX[entity]["items"] = frozenset(new_requirement_options)
+            self.DEPENDENT_REQUIREMENTS_BY_ENTITY_ID[entity]["items"] = frozenset(new_requirement_options)
 
     def adjust_requirements_for_second_stage_symbols(self, world: "WitnessWorld") -> None:
         """
