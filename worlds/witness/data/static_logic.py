@@ -180,7 +180,7 @@ class StaticWitnessLogicObj:
                 "Laser Pressure Plates",
             }
 
-            if location_id == "Audio Log":
+            if entity_type == "Audio Log":
                 entity_type = "Audio Log"
                 location_type = None
             elif "Discard" in entity_name:
