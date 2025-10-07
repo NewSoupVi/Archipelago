@@ -138,7 +138,7 @@ class StaticWitnessLogicObj:
             line_split = line.split(" - ")
 
             entity_type = "General"
-            if line_split[0] in ("Door", "Laser"):
+            if line_split[0] in ("Door", "Laser", "Audio Log"):
                 entity_type = line_split.pop(0)
 
             entity_name_full = line_split.pop(0)
