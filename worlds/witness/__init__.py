@@ -356,14 +356,14 @@ class WitnessWorld(World):
         hint_amount = self.options.hint_amount.value
 
         all_audio_logs = [
-            entity_hex for entity_hex, entity_obj in static_witness_logic.ENTITIES_BY_HEX.items()
+            entity_id for entity_id, entity_obj in static_witness_logic.ENTITIES_BY_ID.items()
             if entity_obj["entityType"] == "Audio Log"
         ]
         enabled_audio_logs = [
-            log_hex for log_hex in all_audio_logs if log_hex not in self.player_logic.COMPLETELY_DISABLED_ENTITIES
+            log_id for log_id in all_audio_logs if log_id not in self.player_logic.COMPLETELY_DISABLED_ENTITIES
         ]
         disabled_audio_logs = [
-            log_hex for log_hex in all_audio_logs if log_hex in self.player_logic.COMPLETELY_DISABLED_ENTITIES
+            log_id for log_id in all_audio_logs if log_id in self.player_logic.COMPLETELY_DISABLED_ENTITIES
         ]
 
         if hint_amount > len(enabled_audio_logs):
