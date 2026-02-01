@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional, cast
 from BaseClasses import CollectionState, Entrance, Location, LocationProgressType, Region, Tutorial
 
 from Options import OptionError, PerGameCommonOptions, Toggle
+from rule_builder.cached_world import CachedRuleBuilderWorld
 from worlds.AutoWorld import WebWorld, World
 
 from .data import static_items as static_witness_items
@@ -58,7 +59,7 @@ class WitnessWebWorld(WebWorld):
     option_groups = witness_option_groups
 
 
-class WitnessWorld(World):
+class WitnessWorld(CachedRuleBuilderWorld):
     """
     The Witness is an open-world puzzle game with dozens of locations
     to explore and over 500 puzzles. Play the popular puzzle randomizer
