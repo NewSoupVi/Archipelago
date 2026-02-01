@@ -30,10 +30,10 @@ class TestDisableNonRandomized(WitnessTestBase):
             )
 
         with self.subTest("Test that alternate activation triggers award lasers."):
-            self.assertFalse(_has_lasers(1, self.world, False)(self.multiworld.state))
+            self.assertFalse(_has_lasers(1, self.world, False).resolve(self.world)(self.multiworld.state))
 
             self.collect_by_name("Triangles")
 
             # Alternate triggers yield Bunker Laser (Mountainside Discard) and Monastery Laser (Desert Discard)
-            self.assertTrue(_has_lasers(2, self.world, False)(self.multiworld.state))
-            self.assertFalse(_has_lasers(3, self.world, False)(self.multiworld.state))
+            self.assertTrue(_has_lasers(2, self.world, False).resolve(self.world)(self.multiworld.state))
+            self.assertFalse(_has_lasers(3, self.world, False).resolve(self.world)(self.multiworld.state))

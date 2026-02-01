@@ -12,7 +12,6 @@ from worlds.generic.Rules import CollectionRule
 from .data import static_logic as static_witness_logic
 from .data.definition_classes import WitnessRule
 from .data.static_logic import StaticWitnessLogicObj
-from .data.utils import optimize_witness_rule
 from .locations import WitnessPlayerLocations
 from .player_logic import WitnessPlayerLogic
 
@@ -41,7 +40,7 @@ class WitnessPlayerRegions:
         self.created_region_names: Set[str] = set()
 
     @staticmethod
-    def make_lambda(item_requirement: WitnessRule, world: "WitnessWorld") -> Optional[CollectionRule]:
+    def make_rule(item_requirement: WitnessRule, world: "WitnessWorld") -> Optional[CollectionRule]:
         from .rules import _meets_item_requirements
 
         """
@@ -69,7 +68,6 @@ class WitnessPlayerRegions:
 
         # We don't need to check for the accessibility of the source region.
         final_requirement = frozenset({option - frozenset({source}) for option in real_requirement})
-        final_requirement = optimize_witness_rule(final_requirement)
 
         source_region = regions_by_name[source]
         target_region = regions_by_name[target]
@@ -82,24 +80,15 @@ class WitnessPlayerRegions:
             source_region
         )
 
-        rule = self.make_lambda(final_requirement, world)
+        rule = self.make_rule(final_requirement, world)
         if rule is not None:
-            connection.access_rule = rule
+            world.set_rule(connection, rule)
 
         source_region.exits.append(connection)
         connection.connect(target_region)
 
         self.two_way_entrance_register[source, target].append(connection)
         self.two_way_entrance_register[target, source].append(connection)
-
-        # Register any necessary indirect connections
-        mentioned_regions = {
-            single_unlock for option in final_requirement for single_unlock in option
-            if single_unlock in self.reference_logic.ALL_REGIONS_BY_NAME
-        }
-
-        for dependent_region in mentioned_regions:
-            world.multiworld.register_indirect_condition(regions_by_name[dependent_region], connection)
 
     def create_regions(self, world: "WitnessWorld", player_logic: WitnessPlayerLogic) -> None:
         """

@@ -2,9 +2,14 @@ from datetime import date
 from math import floor
 from pkgutil import get_data
 from random import Random
-from typing import Collection, FrozenSet, Iterable, List, Optional, Set, Tuple, TypeVar
+from typing import TYPE_CHECKING, Collection, FrozenSet, Iterable, List, Optional, Set, Tuple, TypeVar
+
+from rule_builder.rules import CanReachEntrance, False_, Rule
 
 from .definition_classes import AreaDefinition, ConnectionDefinition, RegionDefinition, WitnessRule
+
+if TYPE_CHECKING:
+    from worlds.witness import WitnessWorld
 
 T = TypeVar("T")
 
@@ -218,20 +223,6 @@ def get_items() -> List[str]:
     return get_adjustment_file("WitnessItems.txt")
 
 
-def optimize_witness_rule(witness_rule: WitnessRule) -> WitnessRule:
-    """Removes any redundant terms from a logical formula in disjunctive normal form.
-    This means removing any terms that are a superset of any other term get removed.
-    This is possible because of the boolean absorption law: a | (a & b) = a"""
-    to_remove = set()
-
-    for option1 in witness_rule:
-        for option2 in witness_rule:
-            if option2 < option1:
-                to_remove.add(option1)
-
-    return witness_rule - to_remove
-
-
 def logical_and_witness_rules(witness_rules: Iterable[WitnessRule]) -> WitnessRule:
     """
     performs the "and" operator on a list of logical formula in disjunctive normal form, represented as a set of sets.
@@ -249,11 +240,25 @@ def logical_and_witness_rules(witness_rules: Iterable[WitnessRule]) -> WitnessRu
 
         current_overall_requirement = frozenset(new_requirement)
 
-    return optimize_witness_rule(current_overall_requirement)
+    return current_overall_requirement
 
 
 def logical_or_witness_rules(witness_rules: Iterable[WitnessRule]) -> WitnessRule:
-    return optimize_witness_rule(frozenset.union(*witness_rules))
+    return frozenset.union(*witness_rules)
+
+
+def entrance_is_reachable(world: "WitnessWorld", region_1: str, region_2: str) -> Rule["WitnessWorld"]:
+    entrances = world.player_regions.two_way_entrance_register[region_1, region_2]
+
+    if not entrances:
+        return False_()
+
+    can_reach = CanReachEntrance(entrances[0].name)
+
+    for other_entrance in entrances[1:]:
+        can_reach |= CanReachEntrance(other_entrance.name)
+
+    return can_reach
 
 
 def is_easter_time() -> bool:
