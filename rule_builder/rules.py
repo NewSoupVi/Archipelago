@@ -85,6 +85,9 @@ class Rule(Generic[TWorld]):
     options: Iterable[OptionFilter] = dataclasses.field(default=(), kw_only=True)
     """An iterable of OptionFilters to restrict what options are required for this rule to be active"""
 
+    filtered_resolution: bool = dataclasses.field(default=False, kw_only=True)
+    """If this rule should default to True or False when filtered by its options"""
+
     game_name: ClassVar[str]
     """The name of the game this rule belongs to, default rules belong to 'Archipelago'"""
 
@@ -100,17 +103,20 @@ class Rule(Generic[TWorld]):
         """Resolve a rule with the given world"""
         for option_filter in self.options:
             if not option_filter.check(world.options):
-                return False_().resolve(world)
+                return True_().resolve(world) if self.filtered_resolution else False_().resolve(world)
         return self._instantiate(world)
 
     def to_dict(self) -> dict[str, Any]:
         """Returns a JSON compatible dict representation of this rule"""
         args = {
-            field.name: getattr(self, field.name, None) for field in dataclasses.fields(self) if field.name != "options"
+            field.name: getattr(self, field.name, None)
+            for field in dataclasses.fields(self)
+            if field.name not in ("options", "filtered_resolution")
         }
         return {
             "rule": self.__class__.__qualname__,
             "options": [o.to_dict() for o in self.options],
+            "filtered_resolution": self.filtered_resolution,
             "args": args,
         }
 
@@ -118,10 +124,16 @@ class Rule(Generic[TWorld]):
     def from_dict(cls, data: Mapping[str, Any], world_cls: "type[World]") -> Self:
         """Returns a new instance of this rule from a serialized dict representation"""
         options = OptionFilter.multiple_from_dict(data.get("options", ()))
-        return cls(**data.get("args", {}), options=options)
+        return cls(**data.get("args", {}), options=options, filtered_resolution=data.get("filtered_resolution", False))
 
-    def __and__(self, other: "Rule[Any]") -> "Rule[TWorld]":
-        """Combines two rules into an And rule"""
+    def __and__(self, other: "Rule[Any] | Iterable[OptionFilter] | OptionFilter") -> "Rule[TWorld]":
+        """Combines two rules or a rule and an option filter into an And rule"""
+        if isinstance(other, OptionFilter):
+            other = (other,)
+        if isinstance(other, Iterable):
+            if not other:
+                return self
+            return Filtered(self, options=other)
         if self.options == other.options:
             if isinstance(self, And):
                 if isinstance(other, And):
@@ -131,8 +143,14 @@ class Rule(Generic[TWorld]):
                 return And(self, *other.children, options=other.options)
         return And(self, other)
 
-    def __or__(self, other: "Rule[Any]") -> "Rule[TWorld]":
-        """Combines two rules into an Or rule"""
+    def __or__(self, other: "Rule[Any] | Iterable[OptionFilter] | OptionFilter") -> "Rule[TWorld]":
+        """Combines two rules or a rule and an option filter into an Or rule"""
+        if isinstance(other, OptionFilter):
+            other = (other,)
+        if isinstance(other, Iterable):
+            if not other:
+                return self
+            return Or(self, True_(options=other))
         if self.options == other.options:
             if isinstance(self, Or):
                 if isinstance(other, Or):
@@ -141,10 +159,6 @@ class Rule(Generic[TWorld]):
             if isinstance(other, Or):
                 return Or(self, *other.children, options=self.options)
         return Or(self, other)
-
-    def __lshift__(self, other: Iterable[OptionFilter]) -> "Rule[TWorld]":
-        """Convenience operator to filter an existing rule with an option filter"""
-        return Filtered(self, options=other)
 
     def __bool__(self) -> Never:
         """Safeguard to prevent devs from mistakenly doing `rule1 and rule2` and getting the wrong result"""

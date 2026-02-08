@@ -89,6 +89,8 @@ If you want a comparison that isn't equals, you can specify with the `operator` 
 - `le`: `<=`
 - `contains`: `in`
 
+By default rules that are excluded by their options will default to `False`. If you want to default to `True` instead, you can specify `filtered_resolution=True` on your rule.
+
 To check if the player can reach a switch, or if they've received the switch item if switches are randomized:
 
 ```python
@@ -98,15 +100,12 @@ rule = (
 )
 ```
 
-To add an extra logic requirement on the easiest difficulty:
+To add an extra logic requirement on the easiest difficulty which is ignored for other difficulties:
 
 ```python
 rule = (
     # ...the rest of the logic
-    & (
-        Has("QoL item", options=[OptionFilter(Difficulty, Difficulty.option_easy)])
-        | True_(options=[OptionFilter(Difficulty, Difficulty.option_medium, operator="ge")])
-    )
+    & Has("QoL item", options=[OptionFilter(Difficulty, Difficulty.option_easy)], filtered_resolution=True)
 )
 ```
 
@@ -121,12 +120,13 @@ rule = (
 )
 ```
 
-You can also use the "shovel" operator `<<` as shorthand:
+You can also use the & and | operators to apply options to rules:
 
 ```python
 common_rule = Has("A")
 easy_filter = [OptionFilter(Difficulty, Difficulty.option_easy)]
-common_rule_only_on_easy = common_rule << easy_filter
+common_rule_only_on_easy = common_rule & easy_filter
+common_rule_skipped_on_easy = common_rule | easy_filter
 ```
 
 ## Enabling caching
@@ -139,8 +139,6 @@ class MyWorld(CachedRuleBuilderWorld):
 ```
 
 If your world's logic is very simple and you don't have many nested rules, the caching system may have more overhead cost than time it saves. You'll have to benchmark your own world to see if it should be enabled or not.
-
-If you enable caching and your rules use `CanReachLocation`, `CanReachEntrance` or a custom rule that depends on locations or entrances, you must call `self.register_dependencies()` after all of your locations and entrances exist to setup the caching system.
 
 ### Item name mapping
 
@@ -451,7 +449,7 @@ These are properties and helpers that are available to you in your world.
 #### Methods
 
 - `rule_from_dict(data)`: Create a rule instance from a deserialized dict representation
-- `register_dependencies()`: Register all rules that depend on location or entrance access with the inherited dependencies
+- `register_rule_builder_dependencies()`: Register all rules that depend on location or entrance access with the inherited dependencies, gets called automatically after set_rules
 - `set_rule(spot: Location | Entrance, rule: Rule)`: Resolve a rule, register its dependencies, and set it on the given location or entrance
 - `set_completion_rule(rule: Rule)`: Sets the completion condition for this world
 - `create_entrance(from_region: Region, to_region: Region, rule: Rule | None, name: str | None = None, force_creation: bool = False)`: Attempt to create an entrance from `from_region` to `to_region`, skipping creation if `rule` is defined and evaluates to `False_()` unless force_creation is `True`
