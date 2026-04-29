@@ -743,7 +743,11 @@ class TheWitnessOptions(PerGameCommonOptions):
 
 
 assert all(
-    issubclass(option_type, RelevanceMixin) or option_name in PerGameCommonOptions.type_hints
+    (
+        issubclass(option_type, RelevanceMixin)
+        or option_name in PerGameCommonOptions.type_hints
+        or option_type is Removed
+    )
     for option_name, option_type in TheWitnessOptions.type_hints.items()
 )
 
