@@ -13,6 +13,7 @@ from Options import (
     OptionSet,
     PerGameCommonOptions,
     Range,
+    Removed,
     Toggle,
     Visibility,
 )
@@ -73,13 +74,20 @@ class EarlyCaves(RelevanceMixin, Choice):
     alias_on = 2
 
 
-class EarlySymbolItem(RelevanceMixin, DefaultOnToggle):
+class EarlyGoodItems(RelevanceMixin, OptionSet):
     """
-    Put a random helpful symbol item on an early check, specifically Tutorial Gate Open if it is available early.
+    Put one random helpful item of each of the chosen types on an early check, specifically a sphere 1 Tutorial location.
+    If a type is chosen, but no items of that type exist in the itempool, it is skipped.
+    The possible types are: "Symbol", "Door / Door Panel", "Obelisk Key".
+
+    If there aren't enough sphere 1 Tutorial locations, Tutorial First Hallway Straight and Tutorial First Hallway Bend may be added as locations.
+    If there still aren't enough sphere 1 Tutorial locations, a random local sphere 1 location is picked.
+    If no local sphere 1 locations are available, there are no further attempts to place the item.
     """
     relevance = OptionRelevance.none
 
-    visibility = Visibility.none
+    valid_keys = {"Symbol", "Door / Door Panel", "Obelisk Key"}
+    default = frozenset({"Symbol"})
 
 
 class ShuffleSymbols(RelevanceMixin, DefaultOnToggle):
@@ -92,6 +100,77 @@ class ShuffleSymbols(RelevanceMixin, DefaultOnToggle):
     relevance = OptionRelevance.all
 
     display_name = "Shuffle Symbols"
+
+
+class ProgressiveSymbols(RelevanceMixin, OptionSet):
+    """
+    Make some symbols progressive, if they exist.
+
+    By default, includes the chains where the second item can't be used without the first.
+
+    Progressive Dots: Dots -> Full Dots
+    Progressive Symmetry: Symmetry -> Colored Dots
+    Progressive Stars: Stars -> Stars + Same Colored Symbol
+    Progressive Squares: Black/White Squares -> Colored Squares
+    Progressive Shapers: Shapers -> Rotated Shapers -> Negative Shapers
+    Progressive Discard Symbols: Triangles -> Arrows
+    """
+    relevance = OptionRelevance.all_trackers  # Client gets this info through chains in slot_data
+
+    display_name = "Progressive Symbols"
+
+    valid_keys = {
+        "Progressive Dots",
+        "Progressive Symmetry",
+        "Progressive Stars",
+        "Progressive Squares",
+        "Progressive Shapers",
+        "Progressive Discard Symbols"
+    }
+
+    default = frozenset({"Progressive Dots", "Progressive Symmetry", "Progressive Stars"})
+
+
+class SecondStageSymbolsActIndependently(RelevanceMixin, OptionSet):
+    """
+    Makes certain second stage symbols act independently of first stage symbols if they are not progressive.
+
+    - "Full Dots": "Full Dots" unlocks Full Dots panels even if you don't have "Dots". "Dots" is renamed to "Sparse Dots".
+    - "Stars + Same Colored Symbol": "Stars + Same Colored Symbol" unlocks Stars + Same Colored Symbol panels even if you don't have "Stars". "Stars" is renamed to "Simlpe Stars".
+    - "Colored Dots": Removes the Symmetry requirement from the Symmetry Laser panel sets so that Colored Dots can unlock something on their own. This is on by default.
+
+    Rotated Shapers always act independently from Shapers. The ability to make them dependent on Shapers by omitting them in this option may be added in the future.
+    """
+    relevance = OptionRelevance.all
+
+    valid_keys = {
+        "Full Dots",
+        "Stars + Same Colored Symbol",
+        "Colored Dots",
+    }
+
+    default = frozenset({"Colored Dots"})
+
+    visibility = Visibility.template | Visibility.complex_ui
+
+
+class ColoredDotsAreProgressiveDots(RelevanceMixin, Toggle):
+    """
+    Put Colored Dots into the "Progressive Dots" group, after Dots.
+    This removes Progressive Symmetry.
+    """
+    relevance = OptionRelevance.all_trackers  # Client gets this info through chains in slot_data
+
+    visibility = Visibility.template | Visibility.complex_ui
+
+
+class SoundDotsAreProgressiveDots(RelevanceMixin, Toggle):
+    """
+    Put Sound Dots into the "Progressive Dots" group, before Full Dots.
+    """
+    relevance = OptionRelevance.all_trackers  # Client gets this info through chains in slot_data
+
+    visibility = Visibility.template | Visibility.complex_ui
 
 
 class ShuffleLasers(RelevanceMixin, Choice):
@@ -620,6 +699,10 @@ class PuzzleRandomizationSeed(RelevanceMixin, Range):
 class TheWitnessOptions(PerGameCommonOptions):
     puzzle_randomization: PuzzleRandomization
     shuffle_symbols: ShuffleSymbols
+    progressive_symbols: ProgressiveSymbols
+    colored_dots_are_progressive_dots: ColoredDotsAreProgressiveDots
+    sound_dots_are_progressive_dots: SoundDotsAreProgressiveDots
+    second_stage_symbols_act_independently: SecondStageSymbolsActIndependently
     shuffle_doors: ShuffleDoors
     door_groupings: DoorGroupings
     shuffle_boat: ShuffleBoat
@@ -641,7 +724,7 @@ class TheWitnessOptions(PerGameCommonOptions):
     panel_hunt_discourage_same_area_factor: PanelHuntDiscourageSameAreaFactor
     panel_hunt_plando: PanelHuntPlando
     early_caves: EarlyCaves
-    early_symbol_item: EarlySymbolItem
+    early_good_items: EarlyGoodItems
     elevators_come_to_you: ElevatorsComeToYou
     trap_percentage: TrapPercentage
     trap_weights: TrapWeights
@@ -655,6 +738,9 @@ class TheWitnessOptions(PerGameCommonOptions):
     puzzle_randomization_seed: PuzzleRandomizationSeed
     shuffle_dog: ShuffleDog
     easter_egg_hunt: EasterEggHunt
+
+    early_symbol_item: Removed
+
 
 assert all(
     issubclass(option_type, RelevanceMixin) or option_name in PerGameCommonOptions.type_hints
@@ -686,6 +772,10 @@ witness_option_groups = [
     ]),
     OptionGroup("Progression Items", [
         ShuffleSymbols,
+        ProgressiveSymbols,
+        SecondStageSymbolsActIndependently,
+        ColoredDotsAreProgressiveDots,
+        SoundDotsAreProgressiveDots,
         ShuffleDoors,
         DoorGroupings,
         ShuffleLasers,
@@ -707,6 +797,7 @@ witness_option_groups = [
         LaserHints
     ]),
     OptionGroup("Misc", [
+        EarlyGoodItems,
         EarlyCaves,
         ElevatorsComeToYou,
         DeathLink,
