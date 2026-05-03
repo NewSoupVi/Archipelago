@@ -579,6 +579,17 @@ class ServerOptions(Group):
         "goal" -> Client can ask for remaining items after goal completion
         """
 
+    class CountdownMode(str):
+        """
+        Countdown modes
+        Determines whether or not a player can initiate a countdown with !countdown
+        Note that /countdown is always available to the host.
+
+        "enabled" -> Client can always initiate a countdown with !countdown.
+        "disabled" -> Client can never initiate a countdown with !countdown.
+        "auto" -> !countdown will be available for any room with less than 30 slots.
+        """
+
     class AutoShutdown(int):
         """Automatically shut down the server after this many seconds without new location checks, 0 to keep running"""
 
@@ -613,6 +624,7 @@ class ServerOptions(Group):
     release_mode: ReleaseMode = ReleaseMode("auto")
     collect_mode: CollectMode = CollectMode("auto")
     remaining_mode: RemainingMode = RemainingMode("goal")
+    countdown_mode: CountdownMode = CountdownMode("auto")
     auto_shutdown: AutoShutdown = AutoShutdown(0)
     compatibility: Compatibility = Compatibility(2)
     log_network: LogNetwork = LogNetwork(0)
@@ -631,6 +643,12 @@ class GeneratorOptions(Group):
 
     class Players(int):
         """amount of players, 0 to infer from player files"""
+
+    class AllowQuantity(Bool):
+        """
+        allow players to set an individual quantity for their yaml settings
+        with 'false' any amounts from the players will be ignored and set to 1
+        """
 
     class WeightsFilePath(str):
         """
@@ -678,6 +696,7 @@ class GeneratorOptions(Group):
     enemizer_path: EnemizerPath = EnemizerPath("EnemizerCLI/EnemizerCLI.Core")  # + ".exe" is implied on Windows
     player_files_path: PlayerFilesPath = PlayerFilesPath("Players")
     players: Players = Players(0)
+    allow_quantity: AllowQuantity | bool = False
     weights_file_path: WeightsFilePath = WeightsFilePath("weights.yaml")
     meta_file_path: MetaFilePath = MetaFilePath("meta.yaml")
     spoiler: Spoiler = Spoiler(3)
