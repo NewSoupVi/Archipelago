@@ -71,7 +71,7 @@ class BounceTarget(typing.NamedTuple):
         return target.team in self.teams
 
     def _games_match(self, target: Client) -> bool:
-        return target.ctx.games[target.slot] in self.games
+        return target.ctx().games[target.slot] in self.games
 
     def _tags_match(self, target: Client) -> bool:
         return bool(set(target.tags) & self.tags)
