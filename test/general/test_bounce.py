@@ -10,8 +10,10 @@ def create_mock_client(team: int, game: str, tags: set[str], slot: int):
     client.tags = tags
     client.slot = slot
 
-    client.ctx = MagicMock()
-    client.ctx.games = {slot: game}
+    ctx = MagicMock()
+    ctx.games = {slot: game}
+
+    client.ctx = lambda: ctx
 
     return client
 
