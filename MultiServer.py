@@ -2229,7 +2229,7 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
                     return
 
             # We now know that if a key is present, it is not None, so this should be the best way to get "set or None"
-            teams = set(args["teams"]) if "teams" in args else {client.team}
+            teams = set(args["teams"]) if "teams" in args else {client.team}  # Team default is only same team
             games = set(args["games"]) if "games" in args else None
             tags = set(args["tags"]) if "tags" in args else None
             slots = set(args["slots"]) if "slots" in args else None
